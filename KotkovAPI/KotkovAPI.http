@@ -1,6 +1,0 @@
-@KotkovAPI_HostAddress = http://localhost:5281
-
-GET {{KotkovAPI_HostAddress}}/weatherforecast/
-Accept: application/json
-
-###
