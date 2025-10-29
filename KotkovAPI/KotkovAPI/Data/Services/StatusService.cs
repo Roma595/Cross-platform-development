@@ -11,17 +11,21 @@ namespace KotkovAPI.Data.Services
         {
             _context = context;
         }
-        private static StatusDTO StatusToDTO(Status status) =>
-            new StatusDTO
+        private static StatusResponseDTO StatusToResponseDTO(Status status) =>
+            new StatusResponseDTO
             {
                 Id = status.Id,
                 Name = status.Name
             };
-        public IEnumerable<StatusDTO> GetAll()
+        private static UpdateStatusDTO StatusToUpdateDTO(Status status) => new UpdateStatusDTO
         {
-            return _context.Statuses.Select(s => StatusToDTO(s)).ToList();
+            Name = status.Name
+        };
+        public IEnumerable<StatusResponseDTO> GetAll()
+        {
+            return _context.Statuses.Select(s => StatusToResponseDTO(s)).ToList();
         }
-        public StatusDTO? GetById(int id)
+        public StatusResponseDTO? GetById(int id)
         {
             var status = _context.Statuses
                 .FirstOrDefault(s => s.Id == id);
@@ -29,9 +33,9 @@ namespace KotkovAPI.Data.Services
             {
                 return null;
             }
-            return StatusToDTO(status);
+            return StatusToResponseDTO(status);
         }
-        public Status Create(StatusDTO statusDTO)
+        public Status Create(CreateStatusDTO statusDTO)
         {
             var status = new Status
             {
@@ -43,7 +47,7 @@ namespace KotkovAPI.Data.Services
 
             return status;
         }
-        public StatusDTO? Update(int id, StatusDTO statusDTO)
+        public StatusResponseDTO? Update(int id, UpdateStatusDTO statusDTO)
         {
             var existingStatus = _context.Statuses.Find(id);
             if (existingStatus != null)
@@ -51,11 +55,10 @@ namespace KotkovAPI.Data.Services
                 existingStatus.Name = statusDTO.Name;
 
                 _context.SaveChanges();
-                return StatusToDTO(existingStatus);
+                return StatusToResponseDTO(existingStatus);
             }
             return null;
         }
-
         public void Delete(int id)
         {
             var status = _context.Statuses.Find(id);
@@ -65,7 +68,5 @@ namespace KotkovAPI.Data.Services
                 _context.SaveChanges();
             }
         }
-
-        
     }
 }

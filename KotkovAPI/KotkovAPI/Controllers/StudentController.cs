@@ -18,7 +18,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<StudentDTO>> GetAll()
+        public ActionResult<IEnumerable<StudentResponseDTO>> GetAll()
         {
             var students = _service.GetAll();
             if (students == null || !students.Any())
@@ -29,7 +29,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<StudentDTO> GetById(int id)
+        public ActionResult<StudentResponseDTO> GetById(int id)
         {
             var student = _service.GetById(id);
             if (student == null)
@@ -40,14 +40,14 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<StudentDTO> Create(StudentDTO studentDTO)
+        public ActionResult<StudentResponseDTO> Create(CreateStudentDTO studentDTO)
         {
             var student = _service.Create(studentDTO);
             return CreatedAtAction(nameof(GetById), new { id = student.Id }, studentDTO);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, StudentDTO studentDTO)
+        public IActionResult Update(int id, UpdateStudentDTO studentDTO)
         {
             var student = _service.Update(id, studentDTO);
             if (student == null)
@@ -67,7 +67,7 @@ namespace KotkovAPI.Controllers
         
 
         [HttpGet("{course_id}/students")]
-        public ActionResult<GetAllStudentsByCourseDTO> GetAllStudentsByCourseId(int course_id)
+        public ActionResult<StudentByCourseDTO> GetAllStudentsByCourseId(int course_id)
         {
             var students = _service.GetAllStudentsByCourse(course_id);
             if (students == null || !students.Any())
@@ -77,10 +77,10 @@ namespace KotkovAPI.Controllers
             return Ok(students);
         }
 
-        [HttpPost("push")]
-        public ActionResult<AttendenceResponseDTO> PushStudentToCourse(PushStudentToCourseDTO pushStudentToCourseDTO)
+        [HttpPost("add_to_course")]
+        public ActionResult<AttendenceResponseDTO> AddStudentToCourse(AddStudentToCourseDTO attendenceDTO)
         {
-            var attendence = _service.PushStudentToCourse(pushStudentToCourseDTO.StudentId, pushStudentToCourseDTO.CourseId, pushStudentToCourseDTO.StatusId);
+            var attendence = _service.AddStudentToCourse(attendenceDTO);
             if (attendence == null)
             {
                 return NotFound();

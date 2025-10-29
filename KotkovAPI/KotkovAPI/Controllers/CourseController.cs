@@ -16,7 +16,7 @@ namespace KotkovAPI.Controllers{
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<CourseDTO>> GetAll()
+        public ActionResult<IEnumerable<CourseResponseDTO>> GetAll()
         {
             var courses = _service.GetAll();
             if (courses == null || !courses.Any())
@@ -27,7 +27,7 @@ namespace KotkovAPI.Controllers{
         }
 
         [HttpGet("{id}")]
-        public ActionResult<CourseDTO> GetById(int id)
+        public ActionResult<CourseResponseDTO> GetById(int id)
         {
             var course = _service.GetById(id);
             if (course == null)
@@ -38,7 +38,7 @@ namespace KotkovAPI.Controllers{
         }
 
         [HttpPost]
-        public ActionResult<CourseDTO> Create(CourseDTO courseDTO)
+        public ActionResult<CourseResponseDTO> Create(CreateCourseDTO courseDTO)
         {
             var course = _service.Create(courseDTO);
             if (course == null)
@@ -50,7 +50,7 @@ namespace KotkovAPI.Controllers{
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, CourseDTO courseDTO)
+        public IActionResult Update(int id, UpdateCourseDTO courseDTO)
         {
             var course = _service.Update(id, courseDTO);
             if (course == null)
@@ -68,7 +68,7 @@ namespace KotkovAPI.Controllers{
         }
 
         [HttpGet("{student_id}/courses")]
-        public ActionResult<GetAllStudentsByCourseDTO> GetAllCoursesByStudentId(int student_id)
+        public ActionResult<CourseByStudentDTO> GetAllCoursesByStudentId(int student_id)
         {
             var courses = _service.GetAllCoursesForStudent(student_id);
             if (courses == null || !courses.Any())

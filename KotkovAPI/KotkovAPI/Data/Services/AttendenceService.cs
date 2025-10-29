@@ -49,7 +49,6 @@ namespace KotkovAPI.Data.Services
             _context.SaveChanges();
             return AttendenceToDTO(attendence);
         }
-
         public void Delete(int studentId, int courseId)
         {
             var attendence = _context.Attendences.First(s => s.StudentId == studentId && s.CourseId == courseId);

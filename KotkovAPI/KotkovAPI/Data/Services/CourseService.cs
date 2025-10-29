@@ -13,15 +13,6 @@ namespace KotkovAPI.Data.Services
             _context = context;
         }
 
-        private static CourseDTO CourseToDTO(Course course) => new CourseDTO
-        {
-            TeacherId = course.TeacherId,
-            Name = course.Name,
-            TotalPlaces = course.TotalPlaces,
-            StartDate = course.StartDate,
-            EndDate = course.EndDate
-        };
-
         private static CourseResponseDTO CourseToResponseDTO(Course course) => new CourseResponseDTO
         {
             Id = course.Id,
@@ -32,12 +23,12 @@ namespace KotkovAPI.Data.Services
             EndDate = course.EndDate
         };
 
-        public IEnumerable<CourseDTO> GetAll()
+        public IEnumerable<CourseResponseDTO> GetAll()
         {
-            return _context.Courses.Select(c => CourseToDTO(c)).ToList();
+            return _context.Courses.Select(c => CourseToResponseDTO(c)).ToList();
         }
 
-        public CourseDTO? GetById(int id)
+        public CourseResponseDTO? GetById(int id)
         {
             var course = _context.Courses
                 .FirstOrDefault(c => c.Id == id);
@@ -45,10 +36,10 @@ namespace KotkovAPI.Data.Services
             {
                 return null;
             }
-            return CourseToDTO(course);
+            return CourseToResponseDTO(course);
         }
 
-        public Course? Create(CourseDTO courseDTO)
+        public Course? Create(CreateCourseDTO courseDTO)
         {   
             var teacher = _context.Teachers.Find(courseDTO.TeacherId);
             if (teacher == null)
@@ -70,7 +61,7 @@ namespace KotkovAPI.Data.Services
             return course;
         }
 
-        public CourseDTO? Update(int id, CourseDTO courseDTO)
+        public CourseResponseDTO? Update(int id, UpdateCourseDTO courseDTO)
         {
             var teacher = _context.Teachers.Find(courseDTO.TeacherId);
             if (teacher == null)
@@ -87,7 +78,7 @@ namespace KotkovAPI.Data.Services
                 existingCourse.EndDate = courseDTO.EndDate;
 
                 _context.SaveChanges();
-                return CourseToDTO(existingCourse);
+                return CourseToResponseDTO(existingCourse);
             }
             return null;
         }
@@ -102,15 +93,13 @@ namespace KotkovAPI.Data.Services
             }
         }
 
-        
-
         public IEnumerable<CourseResponseDTO> GetAllCoursesForStudent(int studentId)
         {
             var student = _context.Students.Find(studentId);
 
             if (student == null)
             {
-                return Enumerable.Empty<CourseResponseDTO>();
+                return [];
             }
 
             var courses = _context.Courses
@@ -119,7 +108,7 @@ namespace KotkovAPI.Data.Services
 
             if (courses == null || !courses.Any())
             {
-                return Enumerable.Empty<CourseResponseDTO>();
+                return [];
             }
             var coursesDTOs = courses.Select(c => CourseToResponseDTO(c)).ToList();
 

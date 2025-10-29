@@ -16,7 +16,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<TestDTO>> GetAll()
+        public ActionResult<IEnumerable<TestResponseDTO>> GetAll()
         {
             var tests = _service.GetAll();
             if (tests == null || !tests.Any())
@@ -27,7 +27,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<TestDTO> GetById(int id)
+        public ActionResult<TestResponseDTO> GetById(int id)
         {
             var test = _service.GetById(id);
             if (test == null)
@@ -38,7 +38,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<TestDTO> Create(TestDTO testDTO)
+        public ActionResult<TestResponseDTO> Create(CreateTestDTO testDTO)
         {
             var test = _service.Create(testDTO);
             if (test == null)
@@ -49,7 +49,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, TestDTO testDTO)
+        public IActionResult Update(int id, UpdateTestDTO testDTO)
         {
             var test = _service.Update(id, testDTO);
             if (test == null)

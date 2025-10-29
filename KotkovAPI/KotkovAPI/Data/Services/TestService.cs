@@ -11,18 +11,17 @@ namespace KotkovAPI.Data.Services
         {
             _context = context;
         }
-        private static TestDTO TestToDTO(Test test) =>
-            new TestDTO
-            {
-                CourseId = test.CourseId,
-                Name = test.Name,
-                HighestMark = test.HighestMark
-            };
-        public IEnumerable<TestDTO> GetAll()
+        private static TestResponseDTO TestToResponseDTO(Test test) => new TestResponseDTO {
+            Id = test.Id,
+            CourseId = test.CourseId,
+            Name = test.Name,
+            HighestMark = test.HighestMark
+        };
+        public IEnumerable<TestResponseDTO> GetAll()
         {
-            return _context.Tests.Select(t => TestToDTO(t)).ToList();
+            return _context.Tests.Select(t => TestToResponseDTO(t)).ToList();
         }
-        public TestDTO? GetById(int id)
+        public TestResponseDTO? GetById(int id)
         {
             var test = _context.Tests
                 .FirstOrDefault(t => t.Id == id);
@@ -30,9 +29,9 @@ namespace KotkovAPI.Data.Services
             {
                 return null;
             }
-            return TestToDTO(test);
+            return TestToResponseDTO(test);
         }
-        public Test? Create(TestDTO testDTO)
+        public Test? Create(CreateTestDTO testDTO)
         {
             var course = _context.Courses.Find(testDTO.CourseId);
             if (course == null)
@@ -51,7 +50,7 @@ namespace KotkovAPI.Data.Services
 
             return test;
         }
-        public TestDTO? Update(int id, TestDTO testDTO)
+        public TestResponseDTO? Update(int id, UpdateTestDTO testDTO)
         {
             var course = _context.Courses.Find(testDTO.CourseId);
             if (course == null)
@@ -66,7 +65,7 @@ namespace KotkovAPI.Data.Services
                 existingTest.HighestMark = testDTO.HighestMark;
 
                 _context.SaveChanges();
-                return TestToDTO(existingTest);
+                return TestToResponseDTO(existingTest);
             }
             return null;
         }

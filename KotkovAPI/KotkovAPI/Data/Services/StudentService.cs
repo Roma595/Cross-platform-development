@@ -15,24 +15,25 @@ namespace KotkovAPI.Data.Services
             _context = context;
         }
 
-        private static StudentDTO StudentToDTO(Student student) => new StudentDTO
+        private static StudentResponseDTO StudentToResponseDTO(Student student) => new StudentResponseDTO
         {
+            Id = student.Id,
             FirstName = student.FirstName,
             LastName = student.LastName,
             PhoneNumber = student.PhoneNumber
         };
-
-        private static GetAllStudentsByCourseDTO StudentToGetAllStudentsByCourseDTO(Student student) => new GetAllStudentsByCourseDTO
+        private static StudentByCourseDTO StudentToStudentByCourseDTO(Student student) => new StudentByCourseDTO
         {
             Id = student.Id,
             FirstName = student.FirstName,
             LastName = student.LastName
         };
-        public IEnumerable<StudentDTO> GetAll()
+
+        public IEnumerable<StudentResponseDTO> GetAll()
         {
-            return _context.Students.Select(s => StudentToDTO(s)).ToList();
+            return _context.Students.Select(s => StudentToResponseDTO(s)).ToList();
         }
-        public StudentDTO? GetById(int id)
+        public StudentResponseDTO? GetById(int id)
         {
             var student = _context.Students
                 .FirstOrDefault(s => s.Id == id);
@@ -40,10 +41,9 @@ namespace KotkovAPI.Data.Services
             {
                 return null;
             }
-            return StudentToDTO(student);
+            return StudentToResponseDTO(student);
         }
-
-        public Student Create(StudentDTO studentDTO)
+        public Student Create(CreateStudentDTO studentDTO)
         {
             var student = new Student
             {
@@ -57,7 +57,7 @@ namespace KotkovAPI.Data.Services
 
             return student;
         }
-        public StudentDTO? Update(int id, StudentDTO studentDTO)
+        public StudentResponseDTO? Update(int id, UpdateStudentDTO studentDTO)
         {
             var existingStudent = _context.Students.Find(id);
             if (existingStudent != null)
@@ -67,7 +67,7 @@ namespace KotkovAPI.Data.Services
                 existingStudent.PhoneNumber = studentDTO.PhoneNumber;
 
                 _context.SaveChanges();
-                return StudentToDTO(existingStudent);
+                return StudentToResponseDTO(existingStudent);
             }
             return null;
         }
@@ -81,40 +81,37 @@ namespace KotkovAPI.Data.Services
             }
         }
 
-        
-
-        public AttendenceResponseDTO? PushStudentToCourse(int studentId, int courseId, int statusId)
+        public AttendenceResponseDTO? AddStudentToCourse(AddStudentToCourseDTO attendenceDTO)
         {
-            var student = _context.Students.Find(studentId);
-            var course = _context.Courses.Include(c => c.Students).First(c => c.Id == courseId);
+            var student = _context.Students.Find(attendenceDTO.StudentId);
+            var course = _context.Courses.Include(c => c.Students).First(c => c.Id == attendenceDTO.CourseId);
 
             if (student == null || course == null)
             {
                 return null;
             }
-            if (!course.Students.Any(s => s.Id == studentId))
+            if (!course.Students.Any(s => s.Id == attendenceDTO.StudentId))
             {
-                var attendence = _attendenceService.Create(studentId, courseId, statusId);
+                var attendence = _attendenceService.Create(attendenceDTO.StudentId, attendenceDTO.CourseId, attendenceDTO.StatusId);
                 _context.SaveChanges();
                 return attendence;
             }
             return null;
         }
-
-        public IEnumerable<GetAllStudentsByCourseDTO> GetAllStudentsByCourse(int courseId)
+        public IEnumerable<StudentByCourseDTO> GetAllStudentsByCourse(int courseId)
         {
             var course = _context.Courses.Find(courseId);
             if (course == null)
             {
-                return Enumerable.Empty<GetAllStudentsByCourseDTO>();
+                return [];
             }
 
             var students = _context.Students.Where(s => s.Courses.Any(c => c.Id == courseId)).ToList();
             if (students == null || !students.Any())
             {
-                return Enumerable.Empty<GetAllStudentsByCourseDTO>();
+                return [];
             }
-            var studentsDTOs = students.Select(s => StudentToGetAllStudentsByCourseDTO(s)).ToList();
+            var studentsDTOs = students.Select(s => StudentToStudentByCourseDTO(s)).ToList();
             return studentsDTOs;
         }
     }

@@ -1,3 +1,5 @@
+using System.ComponentModel.DataAnnotations;
+
 namespace KotkovAPI.DTOs
 {
     public class AttendenceResponseDTO
@@ -6,4 +8,7 @@ namespace KotkovAPI.DTOs
         public required int CourseId { get; set; }
         public required int StatusId { get; set; }
     }
+
+
+    //add create dto
 }

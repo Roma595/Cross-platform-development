@@ -16,7 +16,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<StatusDTO>> GetAll()
+        public ActionResult<IEnumerable<StatusResponseDTO>> GetAll()
         {
             var statuses = _service.GetAll();
             if (statuses == null || !statuses.Any())
@@ -27,7 +27,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        public ActionResult<StatusDTO> GetById(int id)
+        public ActionResult<StatusResponseDTO> GetById(int id)
         {
             var status = _service.GetById(id);
             if (status == null)
@@ -38,14 +38,14 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<StatusDTO> Create(StatusDTO statusDTO)
+        public ActionResult<StatusResponseDTO> Create(CreateStatusDTO statusDTO)
         {
             var status = _service.Create(statusDTO);
             return CreatedAtAction(nameof(GetById), new { id = status.Id }, statusDTO);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, StatusDTO statusDTO)
+        public IActionResult Update(int id, UpdateStatusDTO statusDTO)
         {
             var status = _service.Update(id, statusDTO);
             if (status == null)

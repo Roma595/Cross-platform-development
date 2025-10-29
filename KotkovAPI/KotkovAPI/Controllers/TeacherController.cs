@@ -19,7 +19,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet]
-        public ActionResult<IEnumerable<Teacher>> GetAll()
+        public ActionResult<IEnumerable<TeacherResponseDTO>> GetAll()
         {
             var teachers = _service.GetAll();
             if (teachers == null || !teachers.Any())
@@ -29,7 +29,7 @@ namespace KotkovAPI.Controllers
             return Ok(teachers);
         }
         [HttpGet("{id}")]
-        public ActionResult<TeacherDTO> GetById(int id)
+        public ActionResult<TeacherResponseDTO> GetById(int id)
         {
             var teacher = _service.GetById(id);
             if (teacher == null)
@@ -40,14 +40,14 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPost]
-        public ActionResult<TeacherDTO> Create(TeacherDTO teacherDTO)
+        public ActionResult<TeacherResponseDTO> Create(CreateTeacherDTO teacherDTO)
         {
             var teacher = _service.Create(teacherDTO);
             return CreatedAtAction(nameof(GetById), new { id = teacher.Id }, teacherDTO);
         }
 
         [HttpPut("{id}")]
-        public IActionResult Update(int id, TeacherDTO teacherDTO)
+        public IActionResult Update(int id, UpdateTeacherDTO teacherDTO)
         {
             var teacher = _service.Update(id, teacherDTO);
             if (teacher == null)

@@ -11,20 +11,20 @@ namespace KotkovAPI.Data.Services
             _context = context;
         }
 
-        private static TeacherDTO TeacherToDTO(Teacher teacher) =>
-            new TeacherDTO
+        private static TeacherResponseDTO TeacherToResponseDTO(Teacher teacher) =>
+            new TeacherResponseDTO
             {
+                Id = teacher.Id,
                 FirstName = teacher.FirstName,
                 LastName = teacher.LastName,
                 PhoneNumber = teacher.PhoneNumber
             };
 
-        public IEnumerable<TeacherDTO> GetAll()
+        public IEnumerable<TeacherResponseDTO> GetAll()
         {
-            return _context.Teachers.Select(t => TeacherToDTO(t)).ToList();
+            return _context.Teachers.Select(t => TeacherToResponseDTO(t)).ToList();
         }
-
-        public TeacherDTO? GetById(int id)
+        public TeacherResponseDTO? GetById(int id)
         {
             var teacher = _context.Teachers
                 .FirstOrDefault(t => t.Id == id);
@@ -32,10 +32,9 @@ namespace KotkovAPI.Data.Services
             {
                 return null;
             }
-            return TeacherToDTO(teacher);
+            return TeacherToResponseDTO(teacher);
         }
-
-        public Teacher Create(TeacherDTO teacherDTO)
+        public Teacher Create(CreateTeacherDTO teacherDTO)
         {
             var teacher = new Teacher
             {
@@ -49,8 +48,7 @@ namespace KotkovAPI.Data.Services
 
             return teacher;
         }
-
-        public TeacherDTO? Update(int id, TeacherDTO teacherDTO)
+        public TeacherResponseDTO? Update(int id, UpdateTeacherDTO teacherDTO)
         {
             var existingTeacher = _context.Teachers.Find(id);
             if (existingTeacher != null)
@@ -60,11 +58,10 @@ namespace KotkovAPI.Data.Services
                 existingTeacher.PhoneNumber = teacherDTO.PhoneNumber;
                 _context.SaveChanges();
 
-                return teacherDTO;
+                return TeacherToResponseDTO(existingTeacher);
             }
             return null;
         }
-
         public void Delete(int id)
         {
             var teacher = _context.Teachers.Find(id);
@@ -74,7 +71,5 @@ namespace KotkovAPI.Data.Services
                 _context.SaveChanges();
             }
         }
-
-        
     }
 }
