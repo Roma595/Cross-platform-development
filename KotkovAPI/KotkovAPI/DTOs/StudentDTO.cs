@@ -39,4 +39,18 @@ namespace KotkovAPI.DTOs
         public required string FirstName { get; set; }
         public required string LastName { get; set; }
     }
+
+    public class AddStudentProgressForTestDTO
+    {
+        public required int TestId { get; set; }
+        public required int StudentId { get; set; }
+        public required int Mark { get; set; }
+    }
+
+    public class StudentProgressDTO
+    {
+        public required string CourseName { get; set; }
+        public required string TestName { get; set; }
+        public required int Mark { get; set; }
+    }
 }

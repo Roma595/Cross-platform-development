@@ -23,6 +23,11 @@ namespace KotkovAPI.Data.Services
             EndDate = course.EndDate
         };
 
+        private static CourseByStudentDTO CourseToCourseByStudentDTO(Course course) => new CourseByStudentDTO
+        {
+            Name = course.Name
+        };
+
         public IEnumerable<CourseResponseDTO> GetAll()
         {
             return _context.Courses.Select(c => CourseToResponseDTO(c)).ToList();
@@ -39,7 +44,7 @@ namespace KotkovAPI.Data.Services
             return CourseToResponseDTO(course);
         }
 
-        public Course? Create(CreateCourseDTO courseDTO)
+        public CourseResponseDTO? Create(CreateCourseDTO courseDTO)
         {   
             var teacher = _context.Teachers.Find(courseDTO.TeacherId);
             if (teacher == null)
@@ -58,7 +63,7 @@ namespace KotkovAPI.Data.Services
             _context.Courses.Add(course);
             _context.SaveChanges();
 
-            return course;
+            return CourseToResponseDTO(course);
         }
 
         public CourseResponseDTO? Update(int id, UpdateCourseDTO courseDTO)
@@ -83,34 +88,40 @@ namespace KotkovAPI.Data.Services
             return null;
         }
 
-        public void Delete(int id)
+        public bool Delete(int id)
         {
             var course = _context.Courses.Find(id);
             if (course != null)
             {
-                _context.Courses.Remove(course);
-                _context.SaveChanges();
+                try
+                {
+                    _context.Courses.Remove(course);
+                    _context.SaveChanges();
+                }
+                catch (DbUpdateException)
+                {
+                    return false;
+                }
             }
+            return true;
         }
 
-        public IEnumerable<CourseResponseDTO> GetAllCoursesForStudent(int studentId)
+        public IEnumerable<CourseByStudentDTO> GetAllCoursesForStudent(int studentId)
         {
-            var student = _context.Students.Find(studentId);
+            var student = _context.Students.Include(s => s.Courses).FirstOrDefault(s => s.Id == studentId);
 
             if (student == null)
             {
                 return [];
             }
 
-            var courses = _context.Courses
-                .Where(c => c.Students.Any(s => s.Id == studentId))
-                .ToList();
+            var courses = student.Courses;
 
             if (courses == null || !courses.Any())
             {
                 return [];
             }
-            var coursesDTOs = courses.Select(c => CourseToResponseDTO(c)).ToList();
+            var coursesDTOs = courses.Select(c => CourseToCourseByStudentDTO(c)).ToList();
 
             return coursesDTOs;
         }

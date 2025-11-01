@@ -1,7 +1,6 @@
 namespace KotkovAPI.Data.Services
 {
     using KotkovAPI.Models;
-    using Microsoft.AspNetCore.Identity;
     using KotkovAPI.DTOs;
     using Microsoft.EntityFrameworkCore;
 
@@ -9,9 +8,11 @@ namespace KotkovAPI.Data.Services
     {
         private readonly KotkovAPIContext _context;
         private readonly AttendenceService _attendenceService;
+        private readonly ProgressService _progressService;
         public StudentService(KotkovAPIContext context)
         {
             _attendenceService = new AttendenceService(context);
+            _progressService = new ProgressService(context);
             _context = context;
         }
 
@@ -43,7 +44,7 @@ namespace KotkovAPI.Data.Services
             }
             return StudentToResponseDTO(student);
         }
-        public Student Create(CreateStudentDTO studentDTO)
+        public StudentResponseDTO Create(CreateStudentDTO studentDTO)
         {
             var student = new Student
             {
@@ -55,7 +56,7 @@ namespace KotkovAPI.Data.Services
             _context.Students.Add(student);
             _context.SaveChanges();
 
-            return student;
+            return StudentToResponseDTO(student);
         }
         public StudentResponseDTO? Update(int id, UpdateStudentDTO studentDTO)
         {
@@ -71,20 +72,28 @@ namespace KotkovAPI.Data.Services
             }
             return null;
         }
-        public void Delete(int id)
+        public bool Delete(int id)
         {
             var student = _context.Students.Find(id);
             if (student != null)
             {
-                _context.Students.Remove(student);
-                _context.SaveChanges();
+                try
+                {
+                    _context.Students.Remove(student);
+                    _context.SaveChanges();
+                }
+                catch (DbUpdateException)
+                {
+                    return false;
+                }
             }
+            return true;
         }
 
         public AttendenceResponseDTO? AddStudentToCourse(AddStudentToCourseDTO attendenceDTO)
         {
             var student = _context.Students.Find(attendenceDTO.StudentId);
-            var course = _context.Courses.Include(c => c.Students).First(c => c.Id == attendenceDTO.CourseId);
+            var course = _context.Courses.Include(c => c.Students).FirstOrDefault(c => c.Id == attendenceDTO.CourseId);
 
             if (student == null || course == null)
             {
@@ -100,19 +109,58 @@ namespace KotkovAPI.Data.Services
         }
         public IEnumerable<StudentByCourseDTO> GetAllStudentsByCourse(int courseId)
         {
-            var course = _context.Courses.Find(courseId);
+            var course = _context.Courses.Include(c => c.Students).FirstOrDefault(c => c.Id == courseId);
             if (course == null)
             {
                 return [];
             }
 
-            var students = _context.Students.Where(s => s.Courses.Any(c => c.Id == courseId)).ToList();
+            var students = course.Students;
             if (students == null || !students.Any())
             {
                 return [];
             }
             var studentsDTOs = students.Select(s => StudentToStudentByCourseDTO(s)).ToList();
             return studentsDTOs;
+        }
+
+        public ProgressResponseDTO? AddStudentProgressForTest(AddStudentProgressForTestDTO progressDTO)
+        {
+            var student = _context.Students.Find(progressDTO.StudentId);
+            var test = _context.Tests.Include(t => t.Students).FirstOrDefault(t => t.Id == progressDTO.TestId);
+
+            if (student == null || test == null)
+            {
+                return null;
+            }
+
+            if (!test.Students.Any(s => s.Id == progressDTO.StudentId))
+            {
+                var progress = _progressService.Create(progressDTO.TestId, progressDTO.StudentId, progressDTO.Mark);
+                _context.SaveChanges();
+                return progress;
+            }
+            return null;
+        }
+        public IEnumerable<StudentProgressDTO> GetAllProgressesForStudent(int studentId)
+        {
+            var student = _context.Students.Include(s => s.Progresses).Include(s => s.Tests).ThenInclude(t => t.Course).FirstOrDefault(s => s.Id == studentId);
+            if (student == null)
+            {
+                return [];
+            }
+
+            var progresses = student.Progresses.Select(p => new StudentProgressDTO
+            {
+                CourseName = p.Test!.Course!.Name,
+                TestName = p.Test!.Name,
+                Mark = p.Mark
+            }).ToList();
+            if (progresses == null || !progresses.Any())
+            {
+                return [];
+            }
+            return progresses;
         }
     }
 }

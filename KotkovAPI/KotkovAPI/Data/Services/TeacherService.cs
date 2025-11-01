@@ -34,7 +34,7 @@ namespace KotkovAPI.Data.Services
             }
             return TeacherToResponseDTO(teacher);
         }
-        public Teacher Create(CreateTeacherDTO teacherDTO)
+        public TeacherResponseDTO Create(CreateTeacherDTO teacherDTO)
         {
             var teacher = new Teacher
             {
@@ -46,7 +46,7 @@ namespace KotkovAPI.Data.Services
             _context.Teachers.Add(teacher);
             _context.SaveChanges();
 
-            return teacher;
+            return TeacherToResponseDTO(teacher);
         }
         public TeacherResponseDTO? Update(int id, UpdateTeacherDTO teacherDTO)
         {
@@ -62,14 +62,23 @@ namespace KotkovAPI.Data.Services
             }
             return null;
         }
-        public void Delete(int id)
+        public bool Delete(int id)
         {
             var teacher = _context.Teachers.Find(id);
             if (teacher != null)
             {
-                _context.Teachers.Remove(teacher);
-                _context.SaveChanges();
+                try
+                {
+                    _context.Teachers.Remove(teacher);
+                    _context.SaveChanges();
+                }
+                catch (DbUpdateException)
+                {
+                    return false;
+                }
+
             }
+            return true;
         }
     }
 }

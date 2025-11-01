@@ -45,7 +45,7 @@ namespace KotkovAPI.Controllers
             {
                 return BadRequest("Invalid CourseId");
             }
-            return CreatedAtAction(nameof(GetById), new { id = test.Id }, testDTO);
+            return CreatedAtAction(nameof(GetById), new { id = test.Id }, test);
         }
 
         [HttpPut("{id}")]
@@ -62,10 +62,34 @@ namespace KotkovAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            _service.Delete(id);
-            return NoContent();
+            var ok = _service.Delete(id);
+            if (!ok)
+            {
+                return BadRequest("Unable delete Test");
+            }
+            return Ok();
         }
 
-        
+        [HttpGet("{course_id}/tests")]
+        public ActionResult<TestResponseDTO> GetAllTestsByCourseId(int course_id)
+        {
+            var tests = _service.GetTestsByCourseId(course_id);
+            if (tests == null || !tests.Any())
+            {
+                return BadRequest("Invalid course Id or no tests found for this course");
+            }
+            return Ok(tests);
+        }
+
+        [HttpGet("{test_id}/progresses")]
+        public ActionResult<TestProgressDTO> GetAllProgressesByTestId(int test_id)
+        {
+            var progresses = _service.GetStudentsProgressForTest(test_id);
+            if (progresses == null || !progresses.Any())
+            {
+                return BadRequest("Invalid test Id or no progresses found for this test");
+            }
+            return Ok(progresses);
+        }
     }
 }

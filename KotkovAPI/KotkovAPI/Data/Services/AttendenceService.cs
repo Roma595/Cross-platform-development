@@ -1,5 +1,6 @@
 using KotkovAPI.DTOs;
 using KotkovAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace KotkovAPI.Data.Services
 {
@@ -45,18 +46,26 @@ namespace KotkovAPI.Data.Services
                 CourseId = courseId,
                 StatusId = statusId
             };
-            var entity = _context.Attendences.Add(attendence);
+            _context.Attendences.Add(attendence);
             _context.SaveChanges();
             return AttendenceToDTO(attendence);
         }
-        public void Delete(int studentId, int courseId)
+        public bool Delete(int studentId, int courseId)
         {
             var attendence = _context.Attendences.First(s => s.StudentId == studentId && s.CourseId == courseId);
             if (attendence != null)
             {
-                _context.Attendences.Remove(attendence);
-                _context.SaveChanges();
+                try
+                {
+                    _context.Attendences.Remove(attendence);
+                    _context.SaveChanges();
+                }
+                catch (DbUpdateException)
+                {
+                    return false;
+                }
             }
+            return true;
         }
     }
 }

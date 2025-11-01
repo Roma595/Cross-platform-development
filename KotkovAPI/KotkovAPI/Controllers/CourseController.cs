@@ -45,7 +45,7 @@ namespace KotkovAPI.Controllers{
             {
                 return BadRequest("Invalid teacher ID");
             }
-            return CreatedAtAction(nameof(GetById), new { id = course.Id }, courseDTO);
+            return CreatedAtAction(nameof(GetById), new { id = course.Id }, course);
 
         }
 
@@ -63,8 +63,12 @@ namespace KotkovAPI.Controllers{
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            _service.Delete(id);
-            return NoContent();
+            var ok = _service.Delete(id);
+            if (!ok)
+            {
+                return BadRequest("Unable delete Course");
+            }
+            return Ok();
         }
 
         [HttpGet("{student_id}/courses")]
@@ -73,7 +77,7 @@ namespace KotkovAPI.Controllers{
             var courses = _service.GetAllCoursesForStudent(student_id);
             if (courses == null || !courses.Any())
             {
-                return NotFound();
+                return BadRequest("Invalid student Id or no courses found for this student");
             }
             return Ok(courses);
         }

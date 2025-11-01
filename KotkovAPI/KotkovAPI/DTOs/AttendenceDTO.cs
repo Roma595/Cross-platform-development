@@ -9,6 +9,4 @@ namespace KotkovAPI.DTOs
         public required int StatusId { get; set; }
     }
 
-
-    //add create dto
 }

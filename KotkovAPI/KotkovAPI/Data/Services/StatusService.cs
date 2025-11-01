@@ -1,5 +1,6 @@
 using KotkovAPI.DTOs;
 using KotkovAPI.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace KotkovAPI.Data.Services
 {
@@ -35,7 +36,7 @@ namespace KotkovAPI.Data.Services
             }
             return StatusToResponseDTO(status);
         }
-        public Status Create(CreateStatusDTO statusDTO)
+        public StatusResponseDTO Create(CreateStatusDTO statusDTO)
         {
             var status = new Status
             {
@@ -45,7 +46,7 @@ namespace KotkovAPI.Data.Services
             _context.Statuses.Add(status);
             _context.SaveChanges();
 
-            return status;
+            return StatusToResponseDTO(status);
         }
         public StatusResponseDTO? Update(int id, UpdateStatusDTO statusDTO)
         {
@@ -59,14 +60,22 @@ namespace KotkovAPI.Data.Services
             }
             return null;
         }
-        public void Delete(int id)
+        public bool Delete(int id)
         {
             var status = _context.Statuses.Find(id);
             if (status != null)
             {
-                _context.Statuses.Remove(status);
-                _context.SaveChanges();
+                try
+                {
+                    _context.Statuses.Remove(status);
+                    _context.SaveChanges();
+                }
+                catch (DbUpdateException)
+                {
+                    return false;
+                }
             }
+            return true;
         }
     }
 }

@@ -8,8 +8,8 @@ namespace KotkovAPI.DTOs
         public int TeacherId { get; set; }
         public required string Name { get; set; }
         public int TotalPlaces { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateOnly StartDate { get; set; }
+        public DateOnly EndDate { get; set; }
     }
     public class CreateCourseDTO
     {
@@ -17,8 +17,8 @@ namespace KotkovAPI.DTOs
         [MaxLength(45)]
         public required string Name { get; set; }
         public required int TotalPlaces { get; set; }
-        public required DateTime StartDate { get; set; }
-        public required DateTime EndDate { get; set; }
+        public required DateOnly StartDate { get; set; }
+        public required DateOnly EndDate { get; set; }
     }
 
     public class UpdateCourseDTO
@@ -27,17 +27,12 @@ namespace KotkovAPI.DTOs
         [MaxLength(45)]
         public required string Name { get; set; }
         public required int TotalPlaces { get; set; }
-        public required DateTime StartDate { get; set; }
-        public required DateTime EndDate { get; set; }
+        public required DateOnly StartDate { get; set; }
+        public required DateOnly EndDate { get; set; }
     }
 
     public class CourseByStudentDTO
     {
-        public int Id { get; set; }
-        public int TeacherId { get; set; }
         public required string Name { get; set; }
-        public int TotalPlaces { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
     }
 }

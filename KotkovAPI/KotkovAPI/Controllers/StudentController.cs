@@ -1,7 +1,5 @@
-using System.Xml.Schema;
 using KotkovAPI.Data.Services;
 using KotkovAPI.DTOs;
-using KotkovAPI.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KotkovAPI.Controllers
@@ -43,7 +41,7 @@ namespace KotkovAPI.Controllers
         public ActionResult<StudentResponseDTO> Create(CreateStudentDTO studentDTO)
         {
             var student = _service.Create(studentDTO);
-            return CreatedAtAction(nameof(GetById), new { id = student.Id }, studentDTO);
+            return CreatedAtAction(nameof(GetById), new { id = student.Id }, student);
         }
 
         [HttpPut("{id}")]
@@ -60,8 +58,12 @@ namespace KotkovAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            _service.Delete(id);
-            return NoContent();
+            var ok = _service.Delete(id);
+            if (!ok)
+            {
+                return BadRequest("Unable delete Student");
+            }
+            return Ok();
         }
 
         
@@ -72,7 +74,7 @@ namespace KotkovAPI.Controllers
             var students = _service.GetAllStudentsByCourse(course_id);
             if (students == null || !students.Any())
             {
-                return NotFound();
+                return BadRequest("Invalid course Id or no students found for this course");
             }
             return Ok(students);
         }
@@ -83,9 +85,31 @@ namespace KotkovAPI.Controllers
             var attendence = _service.AddStudentToCourse(attendenceDTO);
             if (attendence == null)
             {
-                return NotFound();
+                return BadRequest("Invalid student ID or course ID, or student is already on the course");
             }
             return Ok(attendence);
+        }
+
+        [HttpPost("add_progress")]
+        public ActionResult<ProgressResponseDTO> AddStudentProgressForTest(AddStudentProgressForTestDTO progressDTO)
+        {
+            var progress = _service.AddStudentProgressForTest(progressDTO);
+            if (progress == null)
+            {
+                return BadRequest("Invalid student ID or test ID, or student has already received a mark for this test");
+            }
+            return Ok(progress);
+        }
+
+        [HttpGet("{student_id}/progresses")]
+        public ActionResult<ProgressResponseDTO> GetAllProgressesByStudentId(int student_id)
+        {
+            var progresses = _service.GetAllProgressesForStudent(student_id);
+            if (progresses == null || !progresses.Any())
+            {
+                return BadRequest("Invalid student Id or no progresses found for this student");
+            }
+            return Ok(progresses);
         }
     }
 }

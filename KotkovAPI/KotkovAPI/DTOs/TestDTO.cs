@@ -25,4 +25,18 @@ namespace KotkovAPI.DTOs
         public required int HighestMark { get; set; }
     }
 
+    public class TestProgressDTO
+    {
+        public required string FirstName { get; set; }
+        public required string LastName { get; set; }
+        public required int Mark { get; set; }
+    }
+
+    public class TestByCourseDTO
+    {
+        public int Id { get; set; }
+        public required string Name { get; set; }
+        public required int HighestMark { get; set; }
+    }
+
 }

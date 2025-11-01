@@ -41,7 +41,7 @@ namespace KotkovAPI.Controllers
         public ActionResult<StatusResponseDTO> Create(CreateStatusDTO statusDTO)
         {
             var status = _service.Create(statusDTO);
-            return CreatedAtAction(nameof(GetById), new { id = status.Id }, statusDTO);
+            return CreatedAtAction(nameof(GetById), new { id = status.Id }, status);
         }
 
         [HttpPut("{id}")]
@@ -58,8 +58,12 @@ namespace KotkovAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            _service.Delete(id);
-            return NoContent();
+            var ok = _service.Delete(id);
+            if (!ok)
+            {
+                return BadRequest("Unable delete Status");
+            }
+            return Ok();
         }
 
         

@@ -1,11 +1,8 @@
 namespace KotkovAPI.Controllers
 {
     using Microsoft.AspNetCore.Mvc;
-    using KotkovAPI.Data;
-    using KotkovAPI.Models;
     using KotkovAPI.Data.Services;
     using KotkovAPI.DTOs;
-    using Microsoft.EntityFrameworkCore;
 
     [ApiController]
     [Route("[controller]")]
@@ -43,7 +40,7 @@ namespace KotkovAPI.Controllers
         public ActionResult<TeacherResponseDTO> Create(CreateTeacherDTO teacherDTO)
         {
             var teacher = _service.Create(teacherDTO);
-            return CreatedAtAction(nameof(GetById), new { id = teacher.Id }, teacherDTO);
+            return CreatedAtAction(nameof(GetById), new { id = teacher.Id }, teacher);
         }
 
         [HttpPut("{id}")]
@@ -60,8 +57,12 @@ namespace KotkovAPI.Controllers
         [HttpDelete("{id}")]
         public IActionResult Delete(int id)
         {
-            _service.Delete(id);
-            return NoContent();
+            var ok = _service.Delete(id);
+            if (!ok)
+            {
+                return BadRequest("Unable delete Teacher");
+            }
+            return Ok();
         }
 
        
