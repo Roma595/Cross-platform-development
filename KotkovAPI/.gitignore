@@ -419,3 +419,4 @@ FodyWeavers.xsd
 
 AuthOptions.cs
 PasswordEncryptor.cs
+.DS_Store
