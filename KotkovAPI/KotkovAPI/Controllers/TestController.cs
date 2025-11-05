@@ -1,11 +1,13 @@
 using KotkovAPI.Data.Services;
 using KotkovAPI.DTOs;
+using KotkovAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KotkovAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class TestController : ControllerBase
     {
         private readonly TestService _service;
@@ -16,6 +18,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult<IEnumerable<TestResponseDTO>> GetAll()
         {
             var tests = _service.GetAll();
@@ -27,6 +30,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher)]
         public ActionResult<TestResponseDTO> GetById(int id)
         {
             var test = _service.GetById(id);
@@ -38,6 +42,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher)]
         public ActionResult<TestResponseDTO> Create(CreateTestDTO testDTO)
         {
             var test = _service.Create(testDTO);
@@ -49,6 +54,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher)]
         public IActionResult Update(int id, UpdateTestDTO testDTO)
         {
             var test = _service.Update(id, testDTO);
@@ -60,6 +66,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher)]
         public IActionResult Delete(int id)
         {
             var ok = _service.Delete(id);
@@ -71,6 +78,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet("{course_id}/tests")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher + "," + Roles.Student)]
         public ActionResult<TestResponseDTO> GetAllTestsByCourseId(int course_id)
         {
             var tests = _service.GetTestsByCourseId(course_id);
@@ -82,6 +90,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet("{test_id}/progresses")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher)]        
         public ActionResult<TestProgressDTO> GetAllProgressesByTestId(int test_id)
         {
             var progresses = _service.GetStudentsProgressForTest(test_id);

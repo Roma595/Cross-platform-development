@@ -1,11 +1,13 @@
 using KotkovAPI.Data.Services;
 using KotkovAPI.DTOs;
+using KotkovAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KotkovAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class StatusController : ControllerBase
     {
         private readonly StatusService _service;
@@ -16,6 +18,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult<IEnumerable<StatusResponseDTO>> GetAll()
         {
             var statuses = _service.GetAll();
@@ -27,6 +30,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Student)]
         public ActionResult<StatusResponseDTO> GetById(int id)
         {
             var status = _service.GetById(id);
@@ -38,6 +42,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult<StatusResponseDTO> Create(CreateStatusDTO statusDTO)
         {
             var status = _service.Create(statusDTO);
@@ -45,6 +50,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult Update(int id, UpdateStatusDTO statusDTO)
         {
             var status = _service.Update(id, statusDTO);
@@ -56,6 +62,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult Delete(int id)
         {
             var ok = _service.Delete(id);

@@ -3,9 +3,11 @@ namespace KotkovAPI.Controllers
     using Microsoft.AspNetCore.Mvc;
     using KotkovAPI.Data.Services;
     using KotkovAPI.DTOs;
+    using Microsoft.AspNetCore.Authorization;
+    using KotkovAPI.Models;
 
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class TeacherController : ControllerBase
     {
         private readonly TeacherService _service;
@@ -16,6 +18,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult<IEnumerable<TeacherResponseDTO>> GetAll()
         {
             var teachers = _service.GetAll();
@@ -26,6 +29,7 @@ namespace KotkovAPI.Controllers
             return Ok(teachers);
         }
         [HttpGet("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult<TeacherResponseDTO> GetById(int id)
         {
             var teacher = _service.GetById(id);
@@ -37,6 +41,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult<TeacherResponseDTO> Create(CreateTeacherDTO teacherDTO)
         {
             var teacher = _service.Create(teacherDTO);
@@ -44,6 +49,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult Update(int id, UpdateTeacherDTO teacherDTO)
         {
             var teacher = _service.Update(id, teacherDTO);
@@ -55,6 +61,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult Delete(int id)
         {
             var ok = _service.Delete(id);

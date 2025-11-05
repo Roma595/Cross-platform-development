@@ -4,6 +4,7 @@ using KotkovAPI.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KotkovAPI.Migrations
 {
     [DbContext(typeof(KotkovAPIContext))]
-    partial class KotkovAPIContextModelSnapshot : ModelSnapshot
+    [Migration("20251103092333_AddPerson")]
+    partial class AddPerson
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -80,7 +83,7 @@ namespace KotkovAPI.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(max)");
+                        .HasColumnType("VARCHAR(50)");
 
                     b.Property<string>("Role")
                         .IsRequired()

@@ -16,6 +16,7 @@ namespace KotkovAPI.Data
         public DbSet<Status> Statuses { get; set; }
         public DbSet<Progress> Progresses { get; set; }
         public DbSet<Attendence> Attendences { get; set; }
+        public DbSet<Person> People { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -185,7 +186,7 @@ namespace KotkovAPI.Data
                     .OnDelete(DeleteBehavior.Restrict);
 
             });
-            
+
             modelBuilder.Entity<Progress>(entity =>
             {
                 entity.ToTable("progresses");
@@ -212,6 +213,22 @@ namespace KotkovAPI.Data
                 //     .HasForeignKey(e => e.StudentId)
                 //     .IsRequired()
                 //     .OnDelete(DeleteBehavior.Restrict);
+            });
+            
+            modelBuilder.Entity<Person>(entity =>
+            {
+                entity.ToTable("people");
+                entity.HasKey(e => e.Login);
+                
+                entity.Property(e => e.Login)
+                    .IsRequired()
+                    .HasColumnType("VARCHAR(50)");
+                entity.Property(e => e.Password)
+                    .IsRequired()
+                    .HasColumnType("VARCHAR(65535)");
+                entity.Property(e => e.Role)
+                    .IsRequired()
+                    .HasColumnType("VARCHAR(50)");
             });
 
         }

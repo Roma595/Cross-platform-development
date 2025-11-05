@@ -1,11 +1,13 @@
 using KotkovAPI.Data.Services;
 using KotkovAPI.DTOs;
+using KotkovAPI.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace KotkovAPI.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class StudentController : ControllerBase
     {
         private readonly StudentService _service;
@@ -16,6 +18,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult<IEnumerable<StudentResponseDTO>> GetAll()
         {
             var students = _service.GetAll();
@@ -27,6 +30,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher)]
         public ActionResult<StudentResponseDTO> GetById(int id)
         {
             var student = _service.GetById(id);
@@ -38,6 +42,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult<StudentResponseDTO> Create(CreateStudentDTO studentDTO)
         {
             var student = _service.Create(studentDTO);
@@ -45,6 +50,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult Update(int id, UpdateStudentDTO studentDTO)
         {
             var student = _service.Update(id, studentDTO);
@@ -56,6 +62,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpDelete("{id}")]
+        [Authorize(Roles = Roles.Admin)]
         public IActionResult Delete(int id)
         {
             var ok = _service.Delete(id);
@@ -66,9 +73,9 @@ namespace KotkovAPI.Controllers
             return Ok();
         }
 
-        
 
         [HttpGet("{course_id}/students")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher)]
         public ActionResult<StudentByCourseDTO> GetAllStudentsByCourseId(int course_id)
         {
             var students = _service.GetAllStudentsByCourse(course_id);
@@ -80,6 +87,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPost("add_to_course")]
+        [Authorize(Roles = Roles.Admin)]
         public ActionResult<AttendenceResponseDTO> AddStudentToCourse(AddStudentToCourseDTO attendenceDTO)
         {
             var attendence = _service.AddStudentToCourse(attendenceDTO);
@@ -91,6 +99,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpPost("add_progress")]
+        [Authorize(Roles = Roles.Teacher)]
         public ActionResult<ProgressResponseDTO> AddStudentProgressForTest(AddStudentProgressForTestDTO progressDTO)
         {
             var progress = _service.AddStudentProgressForTest(progressDTO);
@@ -102,6 +111,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet("{student_id}/progresses")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher + "," + Roles.Student)]
         public ActionResult<ProgressResponseDTO> GetAllProgressesByStudentId(int student_id)
         {
             var progresses = _service.GetAllProgressesForStudent(student_id);
