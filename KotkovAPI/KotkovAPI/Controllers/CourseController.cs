@@ -89,5 +89,17 @@ namespace KotkovAPI.Controllers{
             }
             return Ok(courses);
         }
+
+        [HttpGet("cource_id/average_marks")]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher)]
+        public ActionResult<StudentCourseAverageDTO> GetAvarageMarkForStudentsByCourseId(int course_id)
+        {
+            var courses = _service.GetAvarageMarkForStudentsByCourseId(course_id);
+            if (courses == null || !courses.Any())
+            {
+                return BadRequest("Invalid course Id or no students found for this course");
+            }
+            return Ok(courses);
+        }
     }
 }

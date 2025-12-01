@@ -53,4 +53,11 @@ namespace KotkovAPI.DTOs
         public required string TestName { get; set; }
         public required int Mark { get; set; }
     }
+
+    public class StudentCourseAverageDTO
+    {
+        public required string StudentFirstName { get; set; }
+        public required string StudentLastName { get; set; }
+        public required double AverageMark{ get; set; }
+    }
 }

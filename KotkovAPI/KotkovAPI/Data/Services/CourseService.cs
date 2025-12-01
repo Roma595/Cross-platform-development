@@ -126,5 +126,27 @@ namespace KotkovAPI.Data.Services
             return coursesDTOs;
         }
 
+        public IEnumerable<StudentCourseAverageDTO> GetAvarageMarkForStudentsByCourseId(int course_id)
+        {
+
+            var student = _context.Students.Include(s => s.Progresses).Include(s => s.Tests).ThenInclude(t => t.Course);
+            if (student == null)
+            {
+                return [];
+            }
+
+            var progresses = student.Select(s => new StudentCourseAverageDTO
+            {
+                StudentFirstName = s.FirstName,
+                StudentLastName = s.LastName,
+                AverageMark = s.Progresses.Where(p => p.Test!.CourseId == course_id).Average(p => (double?)p.Mark) ?? 0
+            }).OrderByDescending(x => x.AverageMark).ToList();
+            if (progresses == null || !progresses.Any())
+            {
+                return [];
+            }
+            return progresses;
+        }
+
     }
 }
