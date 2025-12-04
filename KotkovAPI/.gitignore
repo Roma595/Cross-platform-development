@@ -417,6 +417,4 @@ FodyWeavers.xsd
 *.msm
 *.msp
 
-AuthOptions.cs
-PasswordEncryptor.cs
 .DS_Store
