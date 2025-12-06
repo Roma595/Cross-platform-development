@@ -1,17 +1,17 @@
 import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
-import { Profile } from '../interfaces/profile.interface';
 import { Observable } from 'rxjs';
+import { Course } from '../interfaces/course.interface';
 
 @Injectable({
   providedIn: 'root',
 })
-export class StudentService {
+export class CourseService {
   http = inject(HttpClient);
 
   baseApiUrl = 'http://localhost:5158/';
   
-  getAllStudents(): Observable<Profile[]> {
-    return this.http.get<Profile[]>(`${this.baseApiUrl}api/Student`);
+  getAllCourses(): Observable<Course[]> {
+    return this.http.get<Course[]>(`${this.baseApiUrl}api/Course`);
   }
 }

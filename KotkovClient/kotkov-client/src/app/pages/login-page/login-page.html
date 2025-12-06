@@ -1,0 +1,18 @@
+<div class="login-page">
+    <form 
+    [formGroup]="loginForm"
+    (ngSubmit)="onSubmit()">
+        <div class ="login-card">
+            <div class="login-card__header">Добро пожаловать</div>
+            <div class="login-input">
+                <label class="login-input__label">Логин</label>
+                <input class="login-input__field" formControlName="login" type="text" placeholder="Введите логин" />
+            </div>
+            <div class="login-input">
+                <label class="login-input__label">Пароль</label>
+                <input class="login-input__field" formControlName="password" type="text" placeholder="Введите пароль" />
+            </div>
+            <button class="login-btn" type="submit">Войти</button>
+        </div>
+    </form>
+</div>

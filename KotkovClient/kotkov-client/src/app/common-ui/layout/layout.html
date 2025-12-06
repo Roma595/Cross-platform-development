@@ -1,0 +1,28 @@
+<div class="main-content">
+    <header class="app-header">
+        <div class="app-header__left">
+            <img class="app-header__logo" src="assets/img/logo.svg" alt="logo">
+            @if (cookieService.get('role') === 'Admin') {
+                <a class="app-header__link" routerLink="/courses">Курсы</a>
+                <a class="app-header__link" routerLink="/students">Студенты</a>
+                <a class="app-header__link" routerLink="/teachers">Преподаватели</a>
+            }
+            @else if (cookieService.get('role') === 'Teacher') {}
+            @else if (cookieService.get('role') === 'Student') {}
+        </div>
+    </header>
+    <router-outlet></router-outlet>
+</div>
+<footer class="app-footer">
+    <div class="app-footer__left">
+        <span>© kotkov-client - 2025</span>
+    </div>
+
+    <div class="app-footer__right">
+        <a href="mailto:support@example.com" class="app-footer__link">Поддержка</a>
+        <span class="app-footer__dot">•</span>
+        <a href="#" class="app-footer__link">Политика конфиденциальности</a>
+    </div>
+</footer>
+
+

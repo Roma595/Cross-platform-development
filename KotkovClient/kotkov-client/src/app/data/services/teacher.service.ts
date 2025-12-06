@@ -6,12 +6,12 @@ import { Observable } from 'rxjs';
 @Injectable({
   providedIn: 'root',
 })
-export class StudentService {
+export class TeacherService {
   http = inject(HttpClient);
 
   baseApiUrl = 'http://localhost:5158/';
   
-  getAllStudents(): Observable<Profile[]> {
-    return this.http.get<Profile[]>(`${this.baseApiUrl}api/Student`);
+  getAllTeachers(): Observable<Profile[]> {
+    return this.http.get<Profile[]>(`${this.baseApiUrl}api/Teacher`);
   }
 }

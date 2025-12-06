@@ -1,0 +1,11 @@
+@if (loading()) {
+    <p>Загрузка...</p>
+} @else if (courses().length !== 0) {
+    <div class="profile-card__wrapper">
+        @for (course of courses(); track course.id) {
+            <app-course-card [course]="course"></app-course-card>
+        }
+    </div>
+} @else {
+    <p>Not found!</p>
+}

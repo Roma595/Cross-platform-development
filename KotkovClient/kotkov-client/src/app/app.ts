@@ -1,13 +1,12 @@
-import { Component, signal } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { ProfileCard } from "./common-ui/profile-card/profile-card";
+import { Component} from '@angular/core';
+import { RouterOutlet } from "@angular/router";
 
 @Component({
   selector: 'app-root',
-  imports: [ProfileCard],
+  standalone: true,
+  imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.scss'
+  styleUrl: './app.scss',
 })
 export class App {
-  protected readonly title = signal('kotkov-client');
 }

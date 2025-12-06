@@ -1,24 +1,42 @@
 @use "./fonts.scss" as *;
 
+
 :root{
+    --gray-color: #F1F2F6;
     --dark-color: #000000;
     --light-color: #FFFFFF;
     --primary-color: #AE7AFF;
+    --blue-color: #3CA1DA;
+    --black-color: #343231;
+}
+
+*,
+*::before,
+*::after{
+    box-sizing: border-box;
+    margin: 0px;
+    padding: 0px;
 }
 
 body{
-    background: var(--dark-color);
-    color: var(--light-color);
+    background: var(--gray-color);
+    color: var(--dark-color);
     font-family: 'JetBrains Mono', monospace;
+}
+
+.main-content{
+    min-height: 100vh;
 }
 
 .course-tag{
     padding: 4px 8px;
     border-radius: 4px;
-    border: 1px solid var(--light-color);
-    display: inline;
+    border: 1px solid var(--dark-color);
+    display: inline-flex;
     font-size: 12px;
     font-weight: 700;
+    height: 24px;
+    margin-bottom: 4px;
     margin-right: 4px;
 }
 
@@ -43,3 +61,5 @@ body{
     line-height: 20px;
     font-weight: 500;
 }
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }

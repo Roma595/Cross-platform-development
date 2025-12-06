@@ -1,18 +1,18 @@
-@if (profile){
+@if (course){
     <div class="profile-card">  
         <div class="avatar-name">
             <img src="assets/img/avatar.svg" alt="Avatar" class="profile-card__avatar">
             <div class="profile-card__name">
-                <strong class="h6">{{ profile.firstName }} {{ profile.lastName }}</strong>
-                <span class="subtitle"> {{ profile.phoneNumber }}</span>
+                <strong class="h6"> {{ course.name}}</strong>
+                <span class="subtitle"></span>
             </div>
         </div>
-        <div class="profile-card__tags">
+        <!-- <div class="profile-card__tags">
             <div class="course-tag">Основы телекоммуницации</div>
             <div class="course-tag">Кросплатформенная разработка</div>
             <div class="course-tag">Теория принятия решений</div>
-            <div class="course-tag">Проектирование автоматизированных систем управления</div>
-        </div>
+            <div class="course-tag">Проектирование автоматизированных систем управ</div>
+        </div> -->
     </div>
 }
 @else {
