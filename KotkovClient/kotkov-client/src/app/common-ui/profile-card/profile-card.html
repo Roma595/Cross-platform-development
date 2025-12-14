@@ -1,4 +1,4 @@
-@if (profile){
+<!-- @if (profile){
     <div class="profile-card">  
         <div class="avatar-name">
             <img src="assets/img/avatar.svg" alt="Avatar" class="profile-card__avatar">
@@ -15,7 +15,50 @@
         </div>
     </div>
 }
-@else {
-    nothin!
-}
 
+ -->
+
+ <div class="profile-card">
+    <div class="profile-card__left">
+        <div class="profile-card__avatar">
+            {{ profile.firstName[0] }}{{ profile.lastName[0] }}
+        </div>
+        <div class="profile-card__name-phone">
+            <h3 class="profile-card__name">
+                {{ profile.firstName }} {{ profile.lastName }}
+            </h3>
+            @if (profile.phoneNumber) {
+                <p class="profile-card__phone">
+                    {{ profile.phoneNumber }}
+                </p>
+            }
+        </div>
+  </div>
+
+
+    @if (profile.courses?.length){
+        <div class="profile-card__courses">
+            <span class="profile-card__courses-label">Курсы:</span>
+            <div class="profile-card__courses-list">
+                @for (course of profile.courses; track course.name) {
+                    <a class="profile-card__course">
+                        {{ course.name }}
+                    </a>
+                }
+            </div>
+        </div>
+    }
+    @else {
+        <div class="profile-card__courses">
+            <span class="profile-card__courses-label">Курсы:</span>
+            <div class="profile-card__courses-list">
+                -
+            </div>
+        </div>
+    }
+    <div class="profile-card__right">
+        <button class="icon-btn" (click)="edit.emit()">Редактировать</button>
+        <button class="icon-btn icon-btn--danger" (click)="delete.emit()">Удалить</button>
+    </div>
+
+</div>

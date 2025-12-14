@@ -7,12 +7,40 @@
                 <a class="app-header__link" routerLink="/students">Студенты</a>
                 <a class="app-header__link" routerLink="/teachers">Преподаватели</a>
             }
-            @else if (cookieService.get('role') === 'Teacher') {}
-            @else if (cookieService.get('role') === 'Student') {}
+            @else if (cookieService.get('role') === 'Teacher') {
+                <a class="app-header__link" routerLink="/courses">Курсы</a>
+            }
+            @else if (cookieService.get('role') === 'Student') {
+                <a class="app-header__link" routerLink="/courses">Все Курсы</a>
+            }
+        </div>
+
+        <div class="app-header__right">
+            <div class="user-menu" (click)="toggleUserMenu()" tabindex="0">
+            <div class="user-menu__avatar">
+                {{ userInitials }}
+            </div>
+            <span class="user-menu__role">{{ userRoleRus() }}</span>
+            <span
+                class="user-menu__arrow"
+                [class.user-menu__arrow--open]="userMenuOpen"
+            >
+                ▾
+            </span>
+            </div>
+
+            @if (userMenuOpen) {
+            <div class="user-menu__dropdown">
+                <button (click)="goToProfile()">Профиль</button>
+                <button (click)="logout()">Выйти</button>
+            </div>
+            }
         </div>
     </header>
+
     <router-outlet></router-outlet>
 </div>
+
 <footer class="app-footer">
     <div class="app-footer__left">
         <span>© kotkov-client - 2025</span>

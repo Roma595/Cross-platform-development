@@ -1,11 +1,278 @@
-@if (loading()) {
-    <p>Загрузка...</p>
-} @else if (courses().length !== 0) {
-    <div class="profile-card__wrapper">
-        @for (course of courses(); track course.id) {
-            <app-course-card [course]="course"></app-course-card>
-        }
+<div>
+    <div class="page-header">
+        <div class="page-header__title">
+            <h1>Курсы</h1>
+            <p>Список всех курсов платформы</p>
+        </div>
+
+        <button class="page-header__btn" (click)="openCreateDialog()">
+            + Добавить курс
+        </button>
     </div>
-} @else {
-    <p>Not found!</p>
+    
+    <div class="view-toggle">
+        <div class="search-container">
+            <div class="search-wrapper">
+                <input
+                type="text"
+                class="search-input"
+                [value]="searchQuery"
+                (input)="onSearchChange($any($event.target).value)"
+                placeholder="Поиск по названию курса или преподавателю..."
+                autocomplete="off"
+                />
+                @if (searchQuery){
+                <button 
+                class="search-clear"
+                (click)="clearSearch()"
+                title="Очистить поиск"
+                >
+                ✕
+                </button>
+                }
+                
+            </div>
+            @if (searchQuery){
+            <span class="search-results">
+                Найдено: {{ getFilteredCourses().length }}
+            </span>
+            }
+            
+        </div>
+        <button
+            type="button"
+            class="view-toggle__btn"
+            [class.is-active]="viewMode === 'cards'"
+            (click)="setViewMode('cards')"
+            title="Карточки">
+
+            <svg class="view-toggle__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <rect x="3" y="3" width="7" height="7" rx="1" />
+                <rect x="14" y="3" width="7" height="7" rx="1" />
+                <rect x="3" y="14" width="7" height="7" rx="1" />
+                <rect x="14" y="14" width="7" height="7" rx="1" />
+            </svg>
+        </button>
+
+        <button
+            type="button"
+            class="view-toggle__btn"
+            [class.is-active]="viewMode === 'table'"
+            (click)="setViewMode('table')"
+            title="Таблица">
+
+            <svg class="view-toggle__icon" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                <path d="M3 5h18M3 5v14c0 1 .5 2 1.5 2h15c1 0 1.5-1 1.5-2V5M3 11h18M8 5v14M16 5v14" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </button>
+    </div>
+
+    @if (viewMode === 'cards') {
+        <div class="courses-grid">
+            @for (course of getFilteredCourses(); track course.id) {
+                <app-course-card 
+                [course]="course"
+                (edit)="openEditDialog(course)"
+                (delete)="deleteCourse(course.id)"
+                />
+            }
+            @if (getFilteredCourses().length === 0 && searchQuery) {
+                <p class="no-results">Курсы не найдены</p>
+            }
+        </div>
+    }
+
+    @if (viewMode === 'table') {    
+        <table class="courses-table">
+            <thead>
+            <tr>
+                <th (click)="sort('id')" [class.is-sorted]="sortColumn === 'id'">
+                    ID
+                    <span class="sort-icon">{{ getSortIcon('id') }}</span>
+                </th>
+                <th (click)="sort('name')" [class.is-sorted]="sortColumn === 'name'">
+                    Название
+                    <span class="sort-icon">{{ getSortIcon('name') }}</span>
+                </th>
+
+                <th (click)="sort('startDate')" [class.is-sorted]="sortColumn === 'startDate'">
+                    Период
+                    <span class="sort-icon">{{ getSortIcon('startDate') }}</span>
+                </th>
+
+                <th (click)="sort('totalPlaces')" [class.is-sorted]="sortColumn === 'totalPlaces'">
+                    Кол-во мест
+                    <span class="sort-icon">{{ getSortIcon('totalPlaces') }}</span>
+                </th>
+
+                <th (click)="sort('totalPlaces')" [class.is-sorted]="sortColumn === 'totalPlaces'">
+                    Кол-во свободных мест
+                    <span class="sort-icon">{{ getSortIcon('totalPlaces') }}</span>
+                </th>
+
+                <th (click)="sort('teacherId')" [class.is-sorted]="sortColumn === 'teacherId'">
+                    Преподаватель
+                    <span class="sort-icon">{{ getSortIcon('teacherId') }}</span>
+                </th>
+                
+                <th>Действия</th>
+            </tr>
+            </thead>
+            <tbody>
+            @for (course of getFilteredCourses(); track course.id) {
+                <tr>
+                <td>{{ course.id }}</td>
+                <td>{{ course.name }}</td>
+                <td>{{ course.startDate }} – {{ course.endDate }}</td>
+                <td>{{ course.totalPlaces }}</td>
+                <td>{{ course.totalPlaces }}</td>
+                <td>{{ getTeacherName(course.teacherId) }}</td>
+                <td class="table-actions">
+                    <button 
+                        class="action-btn edit-btn" 
+                        (click)="openEditDialog(course)"
+                        title="Редактировать"
+                    >
+                        <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                    </button>
+                    <button 
+                        class="action-btn delete-btn" 
+                        (click)="deleteCourse(course.id)"
+                        title="Удалить"
+                    >
+                        <svg class="action-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
+                        </svg>
+                    </button>
+                </td>
+
+                </tr>
+            }
+
+            
+            </tbody>
+        </table>
+        @if (getFilteredCourses().length === 0 && searchQuery) {
+                <p class="no-results">Курсы не найдены</p>
+            }
+    }
+    
+</div>
+
+@if (isCreateOpen) {
+    <div class="modal-backdrop"></div>
+
+    <div class="modal">
+        <div class="modal__header">
+            <h3>{{ editingCourse() ? 'Редактирование курса' : 'Создание курса' }}</h3>
+            <button class="modal__close" (click)="closeCreateDialog()">×</button>
+        </div>
+
+        <form class="modal__body" #f="ngForm" (ngSubmit)="submitCreateorEdit(f.value)">
+            <label>
+                Название
+                <input 
+                    name="name"
+                    minlength="1"
+                    maxlength="45"
+                    ngModel required 
+                    [ngModel]="editingCourse()?.name || ''" 
+                    #name = "ngModel"
+                />
+                <div class="form-field__error">
+                    @if (name.invalid && (name.dirty || name.touched || f.submitted)) {
+                    <span class="field-error">Название не может быть пустым</span>
+                    }
+                </div>
+            </label>
+
+            <label>
+                Кол-во мест
+                <input 
+                    type="number" 
+                    name="totalPlaces" 
+                    min="1"
+                    ngModel required 
+                    [ngModel]="editingCourse()?.totalPlaces ?? ''" 
+                    #totalPlaces="ngModel"
+                />
+                <div class="form-field__error">
+                    @if (totalPlaces.invalid && (totalPlaces.dirty || totalPlaces.touched || f.submitted)) {
+                    <span class="field-error">Укажите количество мест (минимум 1)</span>
+                    }
+                </div>
+                    
+            </label>
+
+            <label>
+                Дата начала
+                <input
+                    type="date"
+                    name="startDate"
+                    ngModel required
+                    [ngModel]="editingCourse()?.startDate ?? ''"
+                    #startDate="ngModel"
+                />
+                <div class="form-field__error">
+                    @if (startDate.invalid && (startDate.dirty || startDate.touched || f.submitted)) {
+                    <span class="field-error">Укажите дату начала</span>
+                    }
+                </div>
+            </label>
+
+            <label>
+                Дата конца
+                <input
+                    type="date"
+                    name="endDate"
+                    ngModel required
+                    [min]="startDate.value"
+                    [ngModel]="editingCourse()?.endDate ?? ''"
+                    #endDate="ngModel"
+                />
+
+                <div class="form-field__error">
+                    @if (endDate.invalid && (endDate.dirty || endDate.touched || f.submitted)) {
+                    <span class="field-error">Дата конца должна быть позже или равна дате начала</span>
+                    }
+                </div>
+            </label>
+
+            <div class="field">
+                <label for="teacher">Преподаватель</label>
+
+                <div class="teacher-autocomplete">
+                    <input
+                        id="teacher"
+                        type="text"
+                        [ngModel]="teacherSearch"
+                        [ngModelOptions]="{ standalone: true }"
+                        (ngModelChange)="onTeacherSearchChange($event)"
+                        placeholder="Начните вводить фамилию или имя"
+                        autocomplete="on"
+                    />
+
+                    @if (filteredTeachers.length && teacherSearch){
+                        <ul class="teacher-list">
+                            @for (teacher of filteredTeachers; track teacher.id){
+                                <li (click)="selectTeacher(teacher)">{{ teacher.fullName }} </li>
+                            }
+                        </ul>
+                    }
+                </div>
+            </div>
+
+            <div class="modal__footer">
+                <button class="modal__btn-cncl" type="button" (click)="closeCreateDialog()">Отмена</button>
+                <button class="modal__btn-submit" type="submit" [disabled]="f.invalid">{{ editingCourse() ? 'Сохранить' : 'Создать' }}</button>
+            </div>
+        </form>
+    </div>
 }
+

@@ -9,9 +9,21 @@ import { Observable } from 'rxjs';
 export class StudentService {
   http = inject(HttpClient);
 
-  baseApiUrl = 'http://localhost:5158/';
+  baseApiUrl = 'http://localhost:5158/api/';
   
   getAllStudents(): Observable<Profile[]> {
-    return this.http.get<Profile[]>(`${this.baseApiUrl}api/Student`);
+    return this.http.get<Profile[]>(`${this.baseApiUrl}Student`);
+  }
+
+  createStudent(student: Profile): Observable<Profile>{
+    return this.http.post<Profile>(`${this.baseApiUrl}Student`, student);
+  }
+
+  updateStudent(id: number, student: Profile) {
+    return this.http.put<Profile>(`${this.baseApiUrl}Student/${id}`, student);
+  }
+
+  deleteStudent(id: number): Observable<Profile>{
+    return this.http.delete<Profile>(`${this.baseApiUrl}Student/${id}`);
   }
 }

@@ -14,7 +14,6 @@ export class TeachersPage {
   
 
   teachers = signal<Profile[]>([]);
-  loading = signal(true);
 
   ngOnInit(): void {
     this.loadTeachers();
@@ -24,10 +23,8 @@ export class TeachersPage {
     this.teacherService.getAllTeachers().subscribe({
       next: (data: Profile[]) => {
         this.teachers.set(data);  
-        this.loading.set(false);
       },
       error: err => {
-        this.loading.set(false);
       }
     });
   }

@@ -14,4 +14,8 @@ export class TeacherService {
   getAllTeachers(): Observable<Profile[]> {
     return this.http.get<Profile[]>(`${this.baseApiUrl}api/Teacher`);
   }
+
+  getTeacherById(id: number):Observable<Profile>{
+    return this.http.get<Profile>(`${this.baseApiUrl}api/Teacher/${id}`);
+  }
 }

@@ -1,21 +1,35 @@
-@if (course){
-    <div class="profile-card">  
-        <div class="avatar-name">
-            <img src="assets/img/avatar.svg" alt="Avatar" class="profile-card__avatar">
-            <div class="profile-card__name">
-                <strong class="h6"> {{ course.name}}</strong>
-                <span class="subtitle"></span>
-            </div>
-        </div>
-        <!-- <div class="profile-card__tags">
-            <div class="course-tag">Основы телекоммуницации</div>
-            <div class="course-tag">Кросплатформенная разработка</div>
-            <div class="course-tag">Теория принятия решений</div>
-            <div class="course-tag">Проектирование автоматизированных систем управ</div>
-        </div> -->
+<div class="course-card">
+    <div class="course-card__header">
+        <h3 class="course-card__title">{{ course.name }}</h3>
+        <p class="course-card__dates">
+            {{ course.startDate }} – {{ course.endDate }}
+        </p>
     </div>
-}
-@else {
-    nothin!
-}
 
+    <div class="course-card__body">
+        @if (cookieService.get('role') === 'Admin') {
+            <div class="course-card__row">
+                <span class="course-card__label">Количество мест</span>
+                <span class="course-card__value">{{ course.totalPlaces }}</span>
+            </div> 
+        }
+
+        <div class="course-card__row">
+            <span class="course-card__label">Количество свободных мест</span>
+            <span class="course-card__value">{{ course.totalPlaces }}</span>
+        </div> 
+        
+        @if (teacher(); as t){
+            <div class="course-card__row">
+                    <span class="course-card__label">Преподаватель</span>
+                    <span class="course-card__value">{{ t.firstName  }} {{ t.lastName }}</span>
+            </div>
+        }
+    </div>
+    @if (cookieService.get('role') === 'Admin') {
+        <div class="course-card__footer">
+        <button class="course-card__btn course-card__btn--primary" (click)="edit.emit()">Редактировать</button>
+        <button class="course-card__btn course-card__btn--danger" (click)="delete.emit()">Удалить</button>
+        </div>
+    }
+</div>

@@ -32,6 +32,34 @@ export class AuthService {
         return !!this.token;
     }
 
+    // isAdmin(){
+    //     var r = this.role();
+    //     if(!r){
+    //         r = this.cookieService.get('role');
+    //     }
+    //     return r === 'Admin' ? true : false;
+    // }
+
+    // isStudent(){
+    //     var r = this.role();
+    //     if(!r){
+    //         r = this.cookieService.get('role');
+    //     }
+    //     return r === 'Student' ? true : false;
+    // }
+
+    // isTeacher(){
+    //     var r = this.role();
+    //     if(!r){
+    //         r = this.cookieService.get('role');
+    //     }
+    //     return r === 'Teacher' ? true : false;
+    // }
+
+    get_role(): string | null {
+        return this.cookieService.get('role');
+    }
+
     login(payload:{login: string; password: string}){
         return this.http.post<TokenResponse>(`${this.baseApiUrl}api/Account/token`, payload).pipe(
             tap(val =>{

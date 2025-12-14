@@ -24,16 +24,9 @@ export class LoginPage {
             //@ts-ignore
             this.authService.login(this.loginForm.value).subscribe({
                 next: (data) =>{
-                    this.router.navigate(['/']);
+                    this.router.navigate(['/courses']);
                     console.log(data);
                 }
-                
-                // next: (data) => {
-                //     console.log('login success', data);
-                // },
-                // error: (err) => {
-                //     console.error('login error', err);
-                // }
             });
         }
         

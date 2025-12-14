@@ -1,11 +1,16 @@
-@if (loading()) {
-    <p>Загрузка...</p>
-} @else if (teachers().length !== 0) {
-    <div class="profile-card__wrapper">
-        @for (teacher of teachers(); track teacher.id) {
-            <app-profile-card [profile]="teacher"></app-profile-card>
-        }
+<div class="page-header">
+    <div class="page-header__title">
+        <h1>Преподаватели</h1>
+        <p>Список всех преподавателей платформы</p>
     </div>
-} @else {
-    <p>Not found!</p>
+
+    <button class="page-header__btn" >
+        + Добавить преподавателя
+    </button>
+</div>
+
+@if (teachers().length !== 0) {
+    @for (teacher of teachers(); track teacher.id) {
+        <app-profile-card [profile]="teacher"></app-profile-card>
+    }
 }

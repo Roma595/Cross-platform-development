@@ -1,8 +1,14 @@
 export interface Course {
-  id: number | string
-  teacherId: number | string
+  id: number 
+  teacherId: number
   name: string
   totalPlaces: number | string
   startDate: Date
   endDate: Date
 }
+
+export interface CourseShort {
+  name: string;
+}
+
+export type CoursesViewMode = 'cards' | 'table';

@@ -1,11 +1,131 @@
-@if (loading()) {
-    <p>Загрузка...</p>
-} @else if (students().length !== 0) {
-    <div class="profile-card__wrapper">
-        @for (student of students(); track student.id) {
-            <app-profile-card [profile]="student"></app-profile-card>
+<div class="page-header">
+    <div class="page-header__title">
+        <h1>Студенты</h1>
+        <p>Список всех студентов платформы</p>
+    </div>
+
+    <button class="page-header__btn" (click)="openCreateDialog()">
+        + Добавить студента
+    </button>
+</div>
+
+<div class="view-toggle">
+    <div class="search-container">
+        <div class="search-wrapper">
+            <input
+            type="text"
+            class="search-input"
+            [value]="searchQuery"
+            (input)="onSearchChange($any($event.target).value)"
+            placeholder="Поиск по ФИО или телефону..."
+            autocomplete="off"
+            />
+            @if (searchQuery){
+                <button 
+                class="search-clear"
+                (click)="clearSearch()"
+                title="Очистить поиск"
+                >
+                    ✕
+                </button>
+            }
+        </div>
+
+        @if(searchQuery){
+            <span class="search-results">
+                Найдено: {{ getFilteredStudents().length }}
+            </span>
         }
     </div>
-} @else {
-    <p>Not found!</p>
+</div>
+
+
+
+@if (students().length !== 0) {
+    @for (student of getFilteredStudents(); track student.id) {
+        <app-profile-card 
+            [profile]="student"
+            (edit)="openEditDialog(student)"
+            (delete)="deleteStudent(student.id)"
+            >
+        </app-profile-card>
+    }
+    @if (getFilteredStudents().length === 0 && searchQuery) {
+        <p class="no-results">Студенты не найдены</p>
+    }
 }
+
+@if (isCreateOpen) {
+    <div class="modal-backdrop"></div>
+
+    <div class="modal">
+        <div class="modal__header">
+            <h3>{{ editingStudent() ? 'Редактирование студента' : 'Создание студента' }}</h3>
+            <button class="modal__close" (click)="closeCreateDialog()">×</button>
+        </div>
+
+        <form class="modal__body" #f="ngForm" (ngSubmit)="submitCreateOrEdit(f.value)">
+            <label>
+                Имя
+                <input 
+                    name="firstName"
+                    minlength="1"
+                    maxlength="50"
+                    ngModel required 
+                    [ngModel]="editingStudent()?.firstName || ''" 
+                    #firstName = "ngModel"
+                />
+                <div class="form-field__error">
+                    @if (firstName.invalid && (firstName.dirty || firstName.touched || f.submitted)) {
+                    <span class="field-error">Имя не может быть пустым</span>
+                    }
+                </div>
+            </label>
+
+            <label>
+                Фамилия
+                <input 
+                    name="lastName"
+                    minlength="1"
+                    maxlength="50"
+                    ngModel required 
+                    [ngModel]="editingStudent()?.lastName || ''" 
+                    #lastName="ngModel"
+                />
+                <div class="form-field__error">
+                    @if (lastName.invalid && (lastName.dirty || lastName.touched || f.submitted)) {
+                    <span class="field-error">Фамилия не может быть пустой</span>
+                    }
+                </div>
+            </label>
+
+            <label>
+                Телефон
+                <input 
+                    type="tel" 
+                    name="phone" 
+                    pattern="^[\d\s\-\+\(\)]*$"
+                    minlength="11"
+                    maxlength="20"
+                    ngModel required 
+                    [ngModel]="editingStudent()?.phoneNumber || ''" 
+                    #phone="ngModel"
+                />
+                <div class="form-field__error">
+                    @if (phone.invalid && (phone.dirty || phone.touched || f.submitted)) {
+                    <span class="field-error">Укажите корректный номер телефона</span>
+                    }
+                </div>
+            </label>
+
+            <div class="modal__footer">
+                <button class="modal__btn-cncl" type="button" (click)="closeCreateDialog()">Отмена</button>
+                <button class="modal__btn-submit" type="submit" [disabled]="f.invalid">{{ editingStudent() ? 'Сохранить' : 'Создать' }}</button>
+            </div>
+        </form>
+    </div>
+}
+
+
+
+

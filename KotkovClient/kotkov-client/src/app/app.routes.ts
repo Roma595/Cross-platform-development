@@ -8,13 +8,13 @@ import { TeachersPage } from './pages/teachers-page/teachers-page';
 import { StudentsPage } from './pages/students-page/students-page';
 
 export const routes: Routes = [
+    { path: '', redirectTo: 'login', pathMatch: 'full' },
+    { path: 'login', component: LoginPage },
     {path: '', component: Layout,canActivate: [canActivateAuth], children: [
         {path: 'courses', component: CoursesPage},
         {path: 'profile', component: ProfilePage}, 
         {path: 'teachers', component: TeachersPage}, 
         {path: 'students', component: StudentsPage}
     ],
-    
-    },
-    {path: 'login', component: LoginPage}
+    }
 ];
