@@ -5,6 +5,7 @@ import { CourseCard } from '../../common-ui/course-card/course-card';
 import { FormsModule } from '@angular/forms';
 import { CookieService } from 'ngx-cookie-service';
 import { TeacherService } from '../../data/services/teacher.service';
+import { StudentService } from '../../data/services/student.service';
 
 @Component({
   selector: 'app-courses-page',
@@ -17,17 +18,20 @@ export class CoursesPage {
   courseService = inject(CourseService);
   cookieService = inject(CookieService);
   teacherService = inject(TeacherService);
+  studentService = inject(StudentService);
   
   isCreateOpen = false;
 
   courses = signal<Course[]>([]);
   teachers: Map<number, string> = new Map();
+  takenPlacesByCourse: Map<number, number> = new Map();
+
   teacherSearch = '';
   filteredTeachers: { id: number; fullName: string }[] = [];
   selectedTeacherId: number | null = null;
-  loading = signal(true);
-  editingCourse = signal<Course | null>(null);
 
+  editingCourse = signal<Course | null>(null);
+  countTakePlaces = signal<number>(0);
   searchQuery = '';
 
   viewMode: CoursesViewMode = 'cards';
@@ -37,7 +41,10 @@ export class CoursesPage {
 
   ngOnInit(): void {
     this.loadCourses();
-    this.loadTeachers()
+    if (this.cookieService.get('role') === 'Admin'){
+      this.loadTeachers();
+    }
+    
   }
 
   setViewMode(mode: CoursesViewMode) {
@@ -53,22 +60,25 @@ export class CoursesPage {
     this.isCreateOpen = true; 
     this.selectedTeacherId = course.teacherId;
     this.teacherSearch = this.getTeacherName(course.teacherId) || '';
+    this.getTakenPlaces(course.id);
   }
 
   closeCreateDialog() {
     this.isCreateOpen = false;
     this.editingCourse.set(null);
     this.teacherSearch = "";
+    this.courses.set([]);
+    this.loadCourses();
   }
 
   loadCourses(): void {
     this.courseService.getAllCourses().subscribe({
       next: (data: Course[]) => {
-        this.courses.set(data);  
-        this.loading.set(false);
+        this.courses.set(data);
+        this.fillTakenPlacesMap(data);  
       },
-      error: err => {
-        this.loading.set(false);
+      error: () => {
+        console.log('error get all courses');
       }
     });
   }
@@ -85,6 +95,25 @@ export class CoursesPage {
     });
   }
 
+  fillTakenPlacesMap(courses: Course[]) {
+    this.takenPlacesByCourse.clear();
+
+    courses.forEach(course => {
+      this.studentService.getAllStudentsByCourseId(course.id).subscribe({
+        next: students => {
+          this.takenPlacesByCourse.set(course.id, students.length);
+        },
+        error: () => {
+          this.takenPlacesByCourse.set(course.id, 0);
+        }
+      });
+    });
+  }
+
+  getTakenPlaces(courseId: number): number {
+    return this.takenPlacesByCourse.get(courseId) ?? 0;
+  }
+
   onTeacherSearchChange(value: string) {
     this.teacherSearch = value;
     const term = value.toLowerCase().trim();
@@ -96,11 +125,12 @@ export class CoursesPage {
 
   selectTeacher(option: { id: number; fullName: string }) {
     this.selectedTeacherId = option.id;
-    this.teacherSearch = option.fullName;       // показываем ФИО
-    this.filteredTeachers = [];                // прячем список
+    this.teacherSearch = option.fullName;
+    this.filteredTeachers = [];
   }
+
   getTeacherName(teacherId: number){
-    return this.teachers.get(teacherId);
+    return this.teachers.get(teacherId) ?? '';
   }
 
   submitCreateorEdit(formValue: any) {
@@ -114,7 +144,6 @@ export class CoursesPage {
     }
 
     if (!editing) {
-      // СОЗДАНИЕ
       const newCourse: Course = {
         id: 0,
         teacherId: teacherId,
@@ -129,6 +158,9 @@ export class CoursesPage {
           this.courses.update(list => [...list, course]);
           this.closeCreateDialog();
         },
+        error: () => {
+          console.log('error create course');
+        }
       });
 
     } else {
@@ -146,6 +178,9 @@ export class CoursesPage {
           this.loadCourses();
           this.closeCreateDialog();
         },
+        error: () => {
+          console.log('error update course');
+        }
       });
     }
     this.teacherSearch = "";
@@ -159,6 +194,9 @@ export class CoursesPage {
     this.courseService.deleteCourse(id).subscribe({
       next: () => {
         this.courses.update(list => list.filter(c => c.id !== id));
+      },
+      error: () => {
+        console.log('error delete course');
       }
     });
   }

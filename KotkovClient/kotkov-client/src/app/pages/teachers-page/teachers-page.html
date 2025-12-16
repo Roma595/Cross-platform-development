@@ -1,16 +1,174 @@
 <div class="page-header">
-    <div class="page-header__title">
-        <h1>Преподаватели</h1>
-        <p>Список всех преподавателей платформы</p>
+  <div class="page-header__title">
+    <h1>Преподаватели</h1>
+    <p>Список всех преподавателей платформы</p>
+  </div>
+
+  @if (cookieService.get('role') === 'Admin'){
+    <button class="page-header__btn" (click)="openCreateDialog()">
+      + Добавить преподавателя
+    </button>
+  }
+</div>
+
+<div class="view-toggle">
+  <div class="search-container">
+    <div class="search-wrapper">
+      <input
+        type="text"
+        class="search-input"
+        [value]="searchQuery"
+        (input)="onSearchChange($any($event.target).value)"
+        placeholder="Поиск по ФИО или телефону..."
+        autocomplete="off"
+      />
+      @if (searchQuery) {
+        <button 
+          class="search-clear"
+          (click)="clearSearch()"
+          title="Очистить поиск"
+        >
+          ✕
+        </button>
+      }
     </div>
 
-    <button class="page-header__btn" >
-        + Добавить преподавателя
-    </button>
+    @if (searchQuery) {
+      <span class="search-results">
+        Найдено: {{ getFilteredTeachers().length }}
+      </span>
+    }
+  </div>
 </div>
 
 @if (teachers().length !== 0) {
-    @for (teacher of teachers(); track teacher.id) {
-        <app-profile-card [profile]="teacher"></app-profile-card>
+  <div>
+    @for (teacher of getFilteredTeachers(); track teacher.id) {
+      <app-profile-card 
+        [profile]="teacher"
+        (edit)="openEditDialog(teacher)"
+        (delete)="deleteTeacher(teacher.id)"
+      >
+      </app-profile-card>
     }
+
+    @if (getFilteredTeachers().length === 0 && searchQuery) {
+      <p class="no-results">Преподаватели не найдены</p>
+    }
+  </div>
+}
+
+@if (isCreateOpen) {
+  <div class="modal-backdrop"></div>
+
+  <div class="modal">
+    <div class="modal__header">
+      <h3>{{ editingTeacher() ? 'Редактирование преподавателя' : 'Создание преподавателя' }}</h3>
+      <button class="modal__close" (click)="closeCreateDialog()">×</button>
+    </div>
+
+    <form class="modal__body" #f="ngForm" (ngSubmit)="submitCreateOrEdit(f.value)">
+      <label>
+        Имя
+        <input 
+          name="firstName"
+          minlength="1"
+          maxlength="50"
+          ngModel required 
+          [ngModel]="editingTeacher()?.firstName || ''" 
+          #firstName="ngModel"
+        />
+        <div class="form-field__error">
+          @if (firstName.invalid && (firstName.dirty || firstName.touched || f.submitted)) {
+            <span class="field-error">Имя не может быть пустым</span>
+          }
+        </div>
+      </label>
+
+      <label>
+        Фамилия
+        <input 
+          name="lastName"
+          minlength="1"
+          maxlength="50"
+          ngModel required 
+          [ngModel]="editingTeacher()?.lastName || ''" 
+          #lastName="ngModel"
+        />
+        <div class="form-field__error">
+          @if (lastName.invalid && (lastName.dirty || lastName.touched || f.submitted)) {
+            <span class="field-error">Фамилия не может быть пустой</span>
+          }
+        </div>
+      </label>
+
+      <label>
+        Телефон
+        <input 
+          type="tel" 
+          name="phone" 
+          pattern="^[\d\s\-\+\(\)]*$"
+          minlength="11"
+          maxlength="20"
+          ngModel
+          [ngModel]="editingTeacher()?.phoneNumber || ''" 
+          #phone="ngModel"
+        />
+        <div class="form-field__error">
+          @if (phone.invalid && (phone.dirty || phone.touched || f.submitted)) {
+            <span class="field-error">Укажите корректный номер телефона</span>
+          }
+        </div>
+      </label>
+
+      @if (!editingTeacher()){
+        <label>
+          Логин
+          <input
+            type="text"
+            name="login"
+            minlength="3"
+            maxlength="50"
+            ngModel required
+            [ngModel]="this.account()?.login"
+            #login="ngModel"
+          />
+          <div class="form-field__error">
+            @if (login.invalid && (login.dirty || login.touched || f.submitted)) {
+              <span class="field-error">
+                Логин не может быть пустым, минимум 3 символа
+              </span>
+            }
+          </div>
+        </label>
+
+        <label>
+          Пароль
+          <input
+            type="password"
+            name="password"
+            minlength="6"
+            maxlength="100"
+            ngModel
+            required
+            [ngModel]="this.account()?.password"
+            #password="ngModel"
+          />
+          <div class="form-field__error">
+            @if (password.invalid && (password.dirty || password.touched || f.submitted)) {
+              <span class="field-error">
+                Пароль не может быть пустым, минимум 6 символов
+              </span>
+            }
+          </div>
+        </label>
+      }
+      <div class="modal__footer">
+        <button class="modal__btn-cncl" type="button" (click)="closeCreateDialog()">Отмена</button>
+        <button class="modal__btn-submit" type="submit" [disabled]="f.invalid">
+          {{ editingTeacher() ? 'Сохранить' : 'Создать' }}
+        </button>
+      </div>
+    </form>
+  </div>
 }

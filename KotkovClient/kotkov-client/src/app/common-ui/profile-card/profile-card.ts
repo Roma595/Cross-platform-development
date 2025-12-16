@@ -12,5 +12,16 @@ export class ProfileCard {
   @Input() profile!: Profile;
   @Output() edit = new EventEmitter<void>();
   @Output() delete = new EventEmitter<void>();
+  @Output() click = new EventEmitter<void>();
+  
+  onEdit(event: MouseEvent) {
+    event.stopPropagation();
+    this.edit.emit();
+  }
+
+  onDelete(event: MouseEvent) {
+    event.stopPropagation();
+    this.delete.emit();
+  }
 
 }

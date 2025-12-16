@@ -20,17 +20,21 @@ export class LoginPage {
 
     onSubmit() {
         if (this.loginForm.valid) {
-            console.log(this.loginForm.value);
             //@ts-ignore
             this.authService.login(this.loginForm.value).subscribe({
                 next: (data) =>{
                     this.router.navigate(['/courses']);
-                    console.log(data);
+                    this.loginForm.reset();
+                },
+                error: () =>{
+                    alert("Неверный логин/пароль");
+                    this.loginForm.reset();
                 }
             });
         }
-        
-
-        
+        else{
+            alert("Неверный логин/пароль");
+            this.loginForm.reset();
+        }  
     }
 }

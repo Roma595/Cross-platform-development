@@ -1,0 +1,28 @@
+.courses-grid {
+    justify-content: center;
+    padding: 0 16px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 400px);
+    align-items: stretch;
+}
+
+.view-toggle {
+    margin-right: 24px;
+    display: flex;
+    gap: 8px;
+    justify-content: flex-end;
+    background: var(--gray-color);
+    padding: 6px;
+    border-radius: 8px;
+}
+
+.search-container {
+    width: 400px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+
+

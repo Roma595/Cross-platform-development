@@ -8,17 +8,19 @@
                 <a class="app-header__link" routerLink="/teachers">Преподаватели</a>
             }
             @else if (cookieService.get('role') === 'Teacher') {
-                <a class="app-header__link" routerLink="/courses">Курсы</a>
+                <a class="app-header__link" routerLink="/courses">Все Курсы</a>
+                <a class="app-header__link" routerLink="/mycourses">Мои Курсы</a>
             }
             @else if (cookieService.get('role') === 'Student') {
                 <a class="app-header__link" routerLink="/courses">Все Курсы</a>
+                <a class="app-header__link" routerLink="/mycourses">Мои Курсы</a>
             }
         </div>
 
         <div class="app-header__right">
             <div class="user-menu" (click)="toggleUserMenu()" tabindex="0">
             <div class="user-menu__avatar">
-                {{ userInitials }}
+                {{ userInitials() }}
             </div>
             <span class="user-menu__role">{{ userRoleRus() }}</span>
             <span

@@ -7,16 +7,16 @@
     </div>
 
     <div class="course-card__body">
-        @if (cookieService.get('role') === 'Admin') {
-            <div class="course-card__row">
-                <span class="course-card__label">Количество мест</span>
-                <span class="course-card__value">{{ course.totalPlaces }}</span>
-            </div> 
-        }
+        
+        <div class="course-card__row">
+            <span class="course-card__label">Количество мест</span>
+            <span class="course-card__value">{{ course.totalPlaces }}</span>
+        </div> 
+        
 
         <div class="course-card__row">
-            <span class="course-card__label">Количество свободных мест</span>
-            <span class="course-card__value">{{ course.totalPlaces }}</span>
+            <span class="course-card__label">Количество занятых мест</span>
+            <span class="course-card__value">{{ takenPlaces() }}</span>
         </div> 
         
         @if (teacher(); as t){

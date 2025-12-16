@@ -4,9 +4,11 @@
         <p>Список всех студентов платформы</p>
     </div>
 
-    <button class="page-header__btn" (click)="openCreateDialog()">
-        + Добавить студента
-    </button>
+    @if (cookieService.get('role') == 'Admin'){
+      <button class="page-header__btn" (click)="openCreateDialog()">
+          + Добавить студента
+      </button>
+    }
 </div>
 
 <div class="view-toggle">
@@ -42,17 +44,91 @@
 
 
 @if (students().length !== 0) {
-    @for (student of getFilteredStudents(); track student.id) {
-        <app-profile-card 
-            [profile]="student"
-            (edit)="openEditDialog(student)"
-            (delete)="deleteStudent(student.id)"
-            >
-        </app-profile-card>
-    }
-    @if (getFilteredStudents().length === 0 && searchQuery) {
-        <p class="no-results">Студенты не найдены</p>
-    }
+    <div>
+        @for (student of getFilteredStudents(); track student.id) {
+            <app-profile-card 
+                [profile]="student"
+                (click)="openDetailDialog(student)"
+                (edit)="openEditDialog(student)"
+                (delete)="deleteStudent(student.id)"
+                >
+            </app-profile-card>
+        }
+        @if (getFilteredStudents().length === 0 && searchQuery) {
+            <p class="no-results">Студенты не найдены</p>
+        }
+    </div>  
+}
+
+@if (isDetailOpen) {
+  <div class="modal-backdrop"></div>
+
+  <div class="modal modal--detail" (click)="$event.stopPropagation()">
+    <div class="modal__header">
+      <h3>{{ selectedStudent()?.firstName }} {{ selectedStudent()?.lastName }}</h3>
+      <button class="modal__close" (click)="closeDetailDialog()">×</button>
+    </div>
+
+    <div class="modal__body modal__body--detail">
+      <!-- Информация студента -->
+      <div class="detail-section">
+        <h4>Основная информация</h4>
+        <div class="detail-item">
+          <span class="detail-label">Телефон:</span>
+          <span class="detail-value">{{ selectedStudent()?.phoneNumber || 'Не указан' }}</span>
+        </div>
+        <div class="detail-item">
+          <span class="detail-label">Роль:</span>
+          <span class="detail-value">Студент</span>
+        </div>
+      </div>
+
+      <!-- Текущие курсы -->
+      <div class="detail-section">
+        <h4>Текущие курсы ({{ selectedStudent()?.courses?.length || 0 }})</h4>
+        @if (selectedStudent()?.courses && selectedStudent()!.courses?.length) {
+          <ul class="courses-list">
+            @for (course of selectedStudent()!.courses; track course.name) {
+              <li class="course-item">{{ course.name }}</li>
+            }
+          </ul>
+        } @else {
+          <p class="no-courses">Студент не зачислен ни на один курс</p>
+        }
+      </div>
+
+      <!-- Зачисление на новый курс -->
+      <div class="detail-section">
+        <h4>Зачислить на курс</h4>
+        <div class="enroll-form">
+          <select 
+            class="form-control"
+            [value]="selectedCourseId() || ''"
+            (change)="selectedCourseId.set($any($event.target).value ? +$any($event.target).value : null)"
+          >
+            <option value="">-- Выберите курс --</option>
+            @for (course of getAvailableCoursesForSelected(); track course.id) {
+              <option [value]="course.id">
+                {{ course.name }}
+              </option>
+            }
+          </select>
+
+          <button 
+            class="btn btn--primary btn--enroll"
+            (click)="addToCourse()"
+            [disabled]="!selectedCourseId()"
+          >
+              <span>Зачислить</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal__footer">
+      <button class="modal__btn-cncl" (click)="closeDetailDialog()">Закрыть</button>
+    </div>
+  </div>
 }
 
 @if (isCreateOpen) {
@@ -107,7 +183,7 @@
                     pattern="^[\d\s\-\+\(\)]*$"
                     minlength="11"
                     maxlength="20"
-                    ngModel required 
+                    ngModel
                     [ngModel]="editingStudent()?.phoneNumber || ''" 
                     #phone="ngModel"
                 />
@@ -117,6 +193,49 @@
                     }
                 </div>
             </label>
+
+            @if (!editingStudent()){
+              <label>
+                Логин
+                <input
+                  type="text"
+                  name="login"
+                  minlength="3"
+                  maxlength="50"
+                  ngModel required
+                  [ngModel]="this.account()?.login"
+                  #login="ngModel"
+                />
+                <div class="form-field__error">
+                  @if (login.invalid && (login.dirty || login.touched || f.submitted)) {
+                    <span class="field-error">
+                      Логин не может быть пустым, минимум 3 символа
+                    </span>
+                  }
+                </div>
+              </label>
+
+              <label>
+                Пароль
+                <input
+                  type="password"
+                  name="password"
+                  minlength="6"
+                  maxlength="100"
+                  ngModel
+                  required
+                  [ngModel]="this.account()?.password"
+                  #password="ngModel"
+                />
+                <div class="form-field__error">
+                  @if (password.invalid && (password.dirty || password.touched || f.submitted)) {
+                    <span class="field-error">
+                      Пароль не может быть пустым, минимум 6 символов
+                    </span>
+                  }
+                </div>
+              </label>
+            }
 
             <div class="modal__footer">
                 <button class="modal__btn-cncl" type="button" (click)="closeCreateDialog()">Отмена</button>

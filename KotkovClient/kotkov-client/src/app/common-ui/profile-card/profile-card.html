@@ -18,7 +18,7 @@
 
  -->
 
- <div class="profile-card">
+ <div class="profile-card" (click)="click.emit()">
     <div class="profile-card__left">
         <div class="profile-card__avatar">
             {{ profile.firstName[0] }}{{ profile.lastName[0] }}
@@ -57,8 +57,8 @@
         </div>
     }
     <div class="profile-card__right">
-        <button class="icon-btn" (click)="edit.emit()">Редактировать</button>
-        <button class="icon-btn icon-btn--danger" (click)="delete.emit()">Удалить</button>
+        <button class="icon-btn" (click)="onEdit($event)">Редактировать</button>
+        <button class="icon-btn icon-btn--danger" (click)="onDelete($event)">Удалить</button>
     </div>
 
 </div>

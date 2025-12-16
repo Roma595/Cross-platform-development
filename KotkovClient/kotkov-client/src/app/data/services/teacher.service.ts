@@ -9,13 +9,25 @@ import { Observable } from 'rxjs';
 export class TeacherService {
   http = inject(HttpClient);
 
-  baseApiUrl = 'http://localhost:5158/';
+  baseApiUrl = 'http://localhost:5158/api/';
   
   getAllTeachers(): Observable<Profile[]> {
-    return this.http.get<Profile[]>(`${this.baseApiUrl}api/Teacher`);
+    return this.http.get<Profile[]>(`${this.baseApiUrl}Teacher`);
   }
 
   getTeacherById(id: number):Observable<Profile>{
-    return this.http.get<Profile>(`${this.baseApiUrl}api/Teacher/${id}`);
+    return this.http.get<Profile>(`${this.baseApiUrl}Teacher/${id}`);
+  }
+
+  createTeacher(teacher: Profile): Observable<Profile>{
+    return this.http.post<Profile>(`${this.baseApiUrl}Teacher`, teacher);
+  }
+
+  updateTeacher(id: number, teacher: Profile) {
+    return this.http.put<Profile>(`${this.baseApiUrl}Teacher/${id}`, teacher);
+  }
+
+  deleteTeacher(id: number): Observable<Profile>{
+    return this.http.delete<Profile>(`${this.baseApiUrl}Teacher/${id}`);
   }
 }

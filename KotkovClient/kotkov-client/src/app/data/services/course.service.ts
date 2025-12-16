@@ -28,6 +28,6 @@ export class CourseService {
   }
 
   getAllCoursesForStudent(studentId: number) {
-    return this.http.get<CourseShort[]>(`${this.baseApiUrl}Course/${studentId}/courses`);
+    return this.http.get<Course[]>(`${this.baseApiUrl}Course/${studentId}/courses`);
   }
 }

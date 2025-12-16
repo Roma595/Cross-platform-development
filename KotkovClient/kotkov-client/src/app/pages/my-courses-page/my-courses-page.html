@@ -1,0 +1,52 @@
+<div>
+    <div class="page-header">
+        <div class="page-header__title">
+            <h1>Мои Курсы</h1>
+            <p>Список моих курсов</p>
+        </div>
+    </div>
+    
+    <div class="view-toggle">
+        <div class="search-container">
+            <div class="search-wrapper">
+                <input
+                type="text"
+                class="search-input"
+                [value]="searchQuery"
+                (input)="onSearchChange($any($event.target).value)"
+                placeholder="Поиск по названию курса или преподавателю..."
+                autocomplete="off"
+                />
+                @if (searchQuery){
+                <button 
+                class="search-clear"
+                (click)="clearSearch()"
+                title="Очистить поиск"
+                >
+                ✕
+                </button>
+                }
+                
+            </div>
+            @if (searchQuery){
+            <span class="search-results">
+                Найдено: {{ getFilteredCourses().length }}
+            </span>
+            }
+            
+        </div>
+    </div>
+
+    <div class="courses-grid">
+        @for (course of getFilteredCourses(); track course.id) {
+            <app-course-card 
+            [course]="course"
+            />
+        }
+        @if (getFilteredCourses().length === 0 && searchQuery) {
+            <p class="no-results">Курсы не найдены</p>
+        }
+    </div>
+    
+</div>
+
