@@ -23,7 +23,8 @@ namespace KotkovAPI.Data.Services
                 var claims = new List<Claim>
                 {
                     new Claim(ClaimsIdentity.DefaultNameClaimType, person.Login),
-                    new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role)
+                    new Claim(ClaimsIdentity.DefaultRoleClaimType, person.Role),
+                    new Claim("userId", person.UserId.ToString())
                 };
                 ClaimsIdentity claimsIdentity =
                 new ClaimsIdentity(claims, "Token", ClaimsIdentity.DefaultNameClaimType,
@@ -57,6 +58,7 @@ namespace KotkovAPI.Data.Services
             {
                 Access_Token = encodedJwt,
                 Username = identity.Name!
+    
             };
 
             return response;
@@ -79,7 +81,8 @@ namespace KotkovAPI.Data.Services
             {
                 Login = registerPersonDTO.Login,
                 Password = PasswordEncryptor.HashPassword(registerPersonDTO.Password),
-                Role = registerPersonDTO.Role
+                Role = registerPersonDTO.Role,
+                UserId = registerPersonDTO.UserId
             };
             
             _context.People.Add(person);

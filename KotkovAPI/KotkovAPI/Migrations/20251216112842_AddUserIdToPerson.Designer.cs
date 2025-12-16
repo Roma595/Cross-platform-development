@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KotkovAPI.Migrations
 {
     [DbContext(typeof(KotkovAPIContext))]
-    [Migration("20251103093232_EditPerson")]
-    partial class EditPerson
+    [Migration("20251216112842_AddUserIdToPerson")]
+    partial class AddUserIdToPerson
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -83,11 +83,14 @@ namespace KotkovAPI.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(max)");
+                        .HasColumnType("VARCHAR(1024)");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("VARCHAR(50)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Login");
 

@@ -30,7 +30,7 @@ namespace KotkovAPI.Controllers
         }
 
         [HttpGet("{id}")]
-        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher + "," + Roles.Student)]
         public ActionResult<StudentResponseDTO> GetById(int id)
         {
             var student = _service.GetById(id);
@@ -75,7 +75,7 @@ namespace KotkovAPI.Controllers
 
 
         [HttpGet("{course_id}/students")]
-        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Teacher + "," + Roles.Student)]
         public ActionResult<StudentByCourseDTO> GetAllStudentsByCourseId(int course_id)
         {
             var students = _service.GetAllStudentsByCourse(course_id);

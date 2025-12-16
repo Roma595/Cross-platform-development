@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace KotkovAPI.Migrations
 {
     [DbContext(typeof(KotkovAPIContext))]
-    [Migration("20251027191928_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20251215182118_InitialMigration")]
+    partial class InitialMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,14 +53,14 @@ namespace KotkovAPI.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<DateTime>("EndDate")
+                    b.Property<DateOnly>("EndDate")
                         .HasColumnType("DATE");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("VARCHAR(45)");
 
-                    b.Property<DateTime>("StartDate")
+                    b.Property<DateOnly>("StartDate")
                         .HasColumnType("DATE");
 
                     b.Property<int>("TeacherId")
@@ -74,6 +74,24 @@ namespace KotkovAPI.Migrations
                     b.HasIndex("TeacherId");
 
                     b.ToTable("courses", (string)null);
+                });
+
+            modelBuilder.Entity("KotkovAPI.Models.Person", b =>
+                {
+                    b.Property<string>("Login")
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.Property<string>("Password")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(1024)");
+
+                    b.Property<string>("Role")
+                        .IsRequired()
+                        .HasColumnType("VARCHAR(50)");
+
+                    b.HasKey("Login");
+
+                    b.ToTable("people", (string)null);
                 });
 
             modelBuilder.Entity("KotkovAPI.Models.Progress", b =>
@@ -128,7 +146,7 @@ namespace KotkovAPI.Migrations
                         .HasColumnType("VARCHAR(50)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("VARCHAR(11)");
+                        .HasColumnType("VARCHAR(20)");
 
                     b.HasKey("Id");
 
@@ -152,7 +170,7 @@ namespace KotkovAPI.Migrations
                         .HasColumnType("VARCHAR(50)");
 
                     b.Property<string>("PhoneNumber")
-                        .HasColumnType("VARCHAR(11)");
+                        .HasColumnType("VARCHAR(20)");
 
                     b.HasKey("Id");
 

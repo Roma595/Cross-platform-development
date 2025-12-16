@@ -33,6 +33,11 @@ namespace KotkovAPI.DTOs
 
     public class CourseByStudentDTO
     {
+        public int Id { get; set; }
+        public required int TeacherId { get; set; }
         public required string Name { get; set; }
+        public required int TotalPlaces { get; set; }
+        public required DateOnly StartDate { get; set; }
+        public required DateOnly EndDate { get; set; }
     }
 }

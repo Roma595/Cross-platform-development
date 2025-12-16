@@ -42,7 +42,7 @@ namespace KotkovAPI.Data
                 entity.HasMany<Course>(e => e.Courses)
                     .WithOne(c => c.Teacher)
                     .HasForeignKey(c => c.TeacherId)
-                    .OnDelete(DeleteBehavior.Restrict);
+                    .OnDelete(DeleteBehavior.Cascade);
             });
 
             modelBuilder.Entity<Student>(entity =>
@@ -225,7 +225,7 @@ namespace KotkovAPI.Data
                     .HasColumnType("VARCHAR(50)");
                 entity.Property(e => e.Password)
                     .IsRequired()
-                    .HasColumnType("VARCHAR(65535)");
+                    .HasColumnType("VARCHAR(1024)");
                 entity.Property(e => e.Role)
                     .IsRequired()
                     .HasColumnType("VARCHAR(50)");

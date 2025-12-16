@@ -80,11 +80,14 @@ namespace KotkovAPI.Migrations
 
                     b.Property<string>("Password")
                         .IsRequired()
-                        .HasColumnType("VARCHAR(max)");
+                        .HasColumnType("VARCHAR(1024)");
 
                     b.Property<string>("Role")
                         .IsRequired()
                         .HasColumnType("VARCHAR(50)");
+
+                    b.Property<int>("UserId")
+                        .HasColumnType("int");
 
                     b.HasKey("Login");
 

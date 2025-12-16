@@ -25,7 +25,12 @@ namespace KotkovAPI.Data.Services
 
         private static CourseByStudentDTO CourseToCourseByStudentDTO(Course course) => new CourseByStudentDTO
         {
-            Name = course.Name
+            Id = course.Id,
+            TeacherId = course.TeacherId,
+            Name = course.Name,
+            TotalPlaces = course.TotalPlaces,
+            StartDate = course.StartDate,
+            EndDate = course.EndDate
         };
 
         public IEnumerable<CourseResponseDTO> GetAll()

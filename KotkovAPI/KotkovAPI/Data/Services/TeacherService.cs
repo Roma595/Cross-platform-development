@@ -69,6 +69,11 @@ namespace KotkovAPI.Data.Services
             {
                 try
                 {
+                    var person = _context.People.FirstOrDefault(p => p.UserId == teacher.Id);
+                    if (person != null)
+                    {
+                        _context.People.Remove(person);
+                    }
                     _context.Teachers.Remove(teacher);
                     _context.SaveChanges();
                 }

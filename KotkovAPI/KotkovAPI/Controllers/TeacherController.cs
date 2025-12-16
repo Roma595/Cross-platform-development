@@ -29,7 +29,7 @@ namespace KotkovAPI.Controllers
             return Ok(teachers);
         }
         [HttpGet("{id}")]
-        [Authorize(Roles = Roles.Admin)]
+        [Authorize(Roles = Roles.Admin + "," + Roles.Student + "," + Roles.Teacher)]
         public ActionResult<TeacherResponseDTO> GetById(int id)
         {
             var teacher = _service.GetById(id);
